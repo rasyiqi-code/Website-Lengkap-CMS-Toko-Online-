@@ -7,6 +7,8 @@ import { getSiteSettings } from "@/modules/site/ui/site-settings";
 import { getTenant, getSiteId } from "@/lib/domains/tenant";
 import GallerySection from "@/components/ui/GallerySection";
 import { hooks } from "@/lib/core/hooks";
+import { headers } from "next/headers";
+import { getBaseUrl } from "@/lib/domains/utils";
 
 import { getPlatformSettings } from "@/lib/settings/platform";
 import {
@@ -33,23 +35,34 @@ const SaaSLandingPage = nextDynamic(() => import("@/app/(pages)/SaaSLandingPage"
 import { SubscriptionClient } from "@/modules/subscription";
 
 export async function generateMetadata(): Promise<Metadata> {
-    const subdomain = await getTenant();
+    const [subdomain, headersList] = await Promise.all([
+        getTenant(),
+        headers()
+    ]);
 
     // If it's root domain, return SaaS metadata
     if (!subdomain) {
-        const platform = await getPlatformSettings();
+        const [platform] = await Promise.all([
+            getPlatformSettings()
+        ]);
+        
+        const host = headersList.get("host");
+        const baseUrl = getBaseUrl(host);
+
         return {
+            metadataBase: new URL(baseUrl),
             title: `${platform.siteName} - Website Marketing Cepat & SEO Friendly untuk Bisnis Anda`,
             description: `Buat website marketing yang dioptimalkan untuk iklan & pencarian dengan loading kilat. Fitur lengkap, desain responsif, siap konversi. Gratis untuk 30 hari!`,
             keywords: ["website marketing", "website bisnis cepat", "website SEO", "landing page creator", "website toko online", "marketing website builder"],
             openGraph: {
                 type: "website",
                 locale: "id_ID",
+                url: baseUrl,
                 title: `${platform.siteName} - Website Marketing Cepat & SEO Friendly`,
                 description: `Buat website marketing yang dioptimalkan untuk iklan & pencarian dengan loading kilat. Fitur lengkap, desain responsif, siap konversi. Gratis untuk 30 hari!`,
                 images: [
                     {
-                        url: `/images/hero-mockup.png`,
+                        url: `${baseUrl}/images/hero-mockup.png`,
                         width: 1200,
                         height: 630,
                         alt: `${platform.siteName} - Platform Website Marketing Profesional`
@@ -61,7 +74,7 @@ export async function generateMetadata(): Promise<Metadata> {
                 card: "summary_large_image",
                 title: `${platform.siteName} - Website Marketing Cepat & SEO Friendly`,
                 description: `Buat website marketing dioptimalkan untuk iklan & SEO. Loading super cepat, fitur lengkap, siap konversi. Gratis 30 hari!`,
-                images: [`/images/hero-mockup.png`],
+                images: [`${baseUrl}/images/hero-mockup.png`],
             }
         };
     }
