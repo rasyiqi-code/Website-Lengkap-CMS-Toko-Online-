@@ -39,8 +39,30 @@ export async function generateMetadata(): Promise<Metadata> {
     if (!subdomain) {
         const platform = await getPlatformSettings();
         return {
-            title: `${platform.siteName} - Jasa Pembuatan Website UMKM & Toko Online Instan`,
-            description: `Platform website terbaik untuk UMKM. Bikin website toko online, company profile, atau portofolio dalam hitungan menit tanpa coding di ${platform.siteName}.`
+            title: `${platform.siteName} - Website Marketing Cepat & SEO Friendly untuk Bisnis Anda`,
+            description: `Buat website marketing yang dioptimalkan untuk iklan & pencarian dengan loading kilat. Fitur lengkap, desain responsif, siap konversi. Gratis untuk 30 hari!`,
+            keywords: ["website marketing", "website bisnis cepat", "website SEO", "landing page creator", "website toko online", "marketing website builder"],
+            openGraph: {
+                type: "website",
+                locale: "id_ID",
+                title: `${platform.siteName} - Website Marketing Cepat & SEO Friendly`,
+                description: `Buat website marketing yang dioptimalkan untuk iklan & pencarian dengan loading kilat. Fitur lengkap, desain responsif, siap konversi. Gratis untuk 30 hari!`,
+                images: [
+                    {
+                        url: `/images/hero-mockup.png`,
+                        width: 1200,
+                        height: 630,
+                        alt: `${platform.siteName} - Platform Website Marketing Profesional`
+                    }
+                ],
+                siteName: platform.siteName,
+            },
+            twitter: {
+                card: "summary_large_image",
+                title: `${platform.siteName} - Website Marketing Cepat & SEO Friendly`,
+                description: `Buat website marketing dioptimalkan untuk iklan & SEO. Loading super cepat, fitur lengkap, siap konversi. Gratis 30 hari!`,
+                images: [`/images/hero-mockup.png`],
+            }
         };
     }
 
@@ -123,11 +145,11 @@ export default async function Page() {
                 <div className="absolute inset-0 z-0">
                     <div className="absolute top-[-10%] left-[-10%] w-[70%] h-[70%] bg-primary/10 rounded-full blur-[120px] animate-pulse" />
                     <div className="absolute bottom-[-10%] right-[-10%] w-[70%] h-[70%] bg-blue-500/10 rounded-full blur-[120px]" />
-                    <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'currentColor\' fill-opacity=\'0.4\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")' }} />
+                    <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23000000\' fill-opacity=\'0.1\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")' }} />
                 </div>
 
                 <div className="relative z-10 max-w-5xl mx-auto px-6 py-20 text-center">
-                    <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-bold uppercase tracking-[0.2em] mb-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
+                    <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-bold uppercase tracking-[0.2em] mb-8">
                         <Sparkles size={14} className="animate-pulse" />
                         Platform Siap Pakai • Lingkungan Premium
                     </div>
@@ -144,16 +166,16 @@ export default async function Page() {
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-6 animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-500">
                         <Link
                             href="/dashboard"
-                            className="group relative px-10 py-5 bg-primary text-white font-black text-sm uppercase tracking-widest rounded-2xl shadow-2xl shadow-primary/40 hover:scale-[1.03] transition-all active:scale-95 overflow-hidden"
+                            className="group relative px-10 py-5 bg-primary text-white font-black text-sm uppercase tracking-widest rounded-2xl shadow-2xl shadow-primary/40 hover:scale-[1.03] transition-transform duration-300"
                         >
                             <span className="relative z-10 flex items-center gap-2">
                                 Buka Dashboard <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
                             </span>
-                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 rounded-2xl" />
                         </Link>
                         <Link
                             href="/dashboard/pages"
-                            className="px-10 py-5 bg-white text-slate-900 border border-slate-200 font-black text-sm uppercase tracking-widest rounded-2xl hover:bg-slate-50 transition-all shadow-xl shadow-black/5 active:scale-95"
+                            className="px-10 py-5 bg-white text-slate-900 border border-slate-200 font-black text-sm uppercase tracking-widest rounded-2xl hover:bg-slate-50 transition-all shadow-sm"
                         >
                             Buat Halaman Pertama
                         </Link>
@@ -197,4 +219,3 @@ export default async function Page() {
 
     return <Client data={data.data as any} />;
 }
-
