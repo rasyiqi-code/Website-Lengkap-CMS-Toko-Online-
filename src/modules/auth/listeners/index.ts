@@ -16,7 +16,6 @@ export async function initAuthListeners() {
           where: { transactionId: data.transactionId }
         });
         if (existing) {
-          console.log(`[AuthListener] Commission already exists for transaction ${data.transactionId}, skipping.`);
           return;
         }
       }
