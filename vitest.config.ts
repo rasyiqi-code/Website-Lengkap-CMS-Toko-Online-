@@ -4,8 +4,8 @@ import path from 'path';
 export default defineConfig({
   test: {
     environment: 'node',
-    setupFiles: ['dotenv/config'],
-    include: ['tests/unit/**/*.test.ts'],
+    setupFiles: ['dotenv/config', 'vitest-setup.ts'],
+    include: ['tests/unit/**/*.test.{ts,tsx}'],
     exclude: [
       '**/node_modules/**',
       '**/dist/**',
@@ -45,5 +45,8 @@ export default defineConfig({
       '@/types': path.resolve(__dirname, './src/modules/shared/types'),
       '@': path.resolve(__dirname, './src'),
     },
+  },
+  esbuild: {
+    jsx: 'automatic',
   },
 });

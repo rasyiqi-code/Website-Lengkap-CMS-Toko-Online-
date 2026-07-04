@@ -23,9 +23,8 @@ export function DeleteProductButton({ productId, productName }: DeleteProductBut
 
             toast.success("Produk berhasil dihapus");
             router.refresh();
-        } catch (error) {
-            alert((error as Error).message);
-            console.error(error);
+        } catch (error: any) {
+            toast.error(error.message || "Terjadi kesalahan saat menghapus produk");
         }
     };
 
