@@ -8,15 +8,12 @@ import { db } from "@/modules/shared/core/db";
 export async function initAuthListeners() {
   await eventBus.subscribe("affiliate.commission.awarded", async (data: any, _metadata) => {
     try {
-      console.log(`[AuthListener] Memproses komisi afiliasi untuk transaksi: ${data.transactionId}, user: ${data.userId}`);
-
       // Idempotency check: skip if commission already exists for this transaction
       if (data.transactionId) {
         const existing = await db.commission.findFirst({
           where: { transactionId: data.transactionId }
         });
         if (existing) {
-          console.log(`[AuthListener] Commission already exists for transaction ${data.transactionId}, skipping.`);
           return;
         }
       }
@@ -28,8 +25,6 @@ export async function initAuthListeners() {
         transactionId: data.transactionId,
         description: data.description
       });
-      
-      console.log(`[AuthListener] Sukses memproses komisi afiliasi untuk transaksi: ${data.transactionId}`);
     } catch (error) {
       console.error(`[AuthListener Error] Gagal memproses komisi afiliasi untuk transaksi: ${data.transactionId}:`, error);
     }
