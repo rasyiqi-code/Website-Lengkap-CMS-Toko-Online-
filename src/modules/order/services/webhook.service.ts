@@ -77,7 +77,6 @@ export async function checkOrderStatus(orderId: string) {
     if (result.success && result.status === "paid" && order.paymentStatus !== "paid") {
         const creditOwner = !paymentSettings?.gatewayMerchantId || !paymentSettings?.gatewayApiKey;
         await processOrderPaymentCallback(order.id, order.siteId, Number(order.total), creditOwner);
-        console.log(`[ORDER_CHECK_STATUS] Order '${order.id}' marked as paid via polling.`);
     }
 
     return {
