@@ -93,6 +93,10 @@ const nextConfig = {
         protocol: "https",
         hostname: appHostname,
       },
+      {
+        protocol: "https",
+        hostname: "api.qrserver.com",
+      },
     ],
     dangerouslyAllowSVG: true,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
