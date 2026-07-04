@@ -1,11 +1,13 @@
 import { defineConfig } from 'vitest/config';
 import path from 'path';
+import react from '@vitejs/plugin-react';
 
 export default defineConfig({
+  plugins: [react()],
   test: {
-    environment: 'node',
-    setupFiles: ['dotenv/config'],
-    include: ['tests/unit/**/*.test.ts'],
+    environment: 'happy-dom',
+    setupFiles: ['dotenv/config', 'tests/setup/test-setup.ts'],
+    include: ['tests/unit/**/*.test.ts', 'tests/unit/**/*.test.tsx'],
     exclude: [
       '**/node_modules/**',
       '**/dist/**',
@@ -18,7 +20,7 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'html', 'json'],
-      include: ['lib/**', 'app/api/**'],
+      include: ['lib/**', 'app/api/**', 'src/modules/notification/ui/**'],
       thresholds: {
         lines: 70,
         functions: 70,
