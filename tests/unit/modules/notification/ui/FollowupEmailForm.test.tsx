@@ -55,7 +55,7 @@ describe('FollowupEmailForm', () => {
 
   it('handles successful form submission', async () => {
     const mockedAction = vi.mocked(sendFollowupEmailAction);
-    mockedAction.mockResolvedValueOnce({ success: true, id: '123' });
+    mockedAction.mockResolvedValueOnce({ success: true, message: 'Email berhasil dikirim', id: '123' });
 
     const user = userEvent.setup();
     render(<FollowupEmailForm />);
@@ -115,7 +115,7 @@ describe('FollowupEmailForm', () => {
 
   it('handles failed form submission with default fallback error', async () => {
     const mockedAction = vi.mocked(sendFollowupEmailAction);
-    mockedAction.mockResolvedValueOnce({ success: false });
+    mockedAction.mockResolvedValueOnce({ success: false, error: 'Gagal' });
 
     const user = userEvent.setup();
     render(<FollowupEmailForm />);
