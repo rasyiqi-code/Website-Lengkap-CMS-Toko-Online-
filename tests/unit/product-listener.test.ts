@@ -11,12 +11,10 @@ vi.mock("next/cache", () => ({
 // We'll use actual next/cache mocked functions
 import { revalidateTag, revalidatePath } from "next/cache";
 
-// We need to spy on eventBus.subscribe
-vi.spyOn(eventBus, "subscribe");
-
 describe("Product Listener", () => {
   beforeEach(() => {
-    vi.clearAllMocks();
+    vi.restoreAllMocks();
+    vi.spyOn(eventBus, "subscribe");
   });
 
   describe("registerProductCrudCacheListener", () => {
@@ -35,7 +33,7 @@ describe("Product Listener", () => {
         if (channel === "crud.created") {
           createdCallback = callback as any;
         }
-        return () => {}; // return mock unsubscribe
+        return Promise.resolve(() => {}); // return mock unsubscribe
       });
 
       registerProductCrudCacheListener();
@@ -63,7 +61,7 @@ describe("Product Listener", () => {
           if (channel === "crud.updated") {
             updatedCallback = callback as any;
           }
-          return () => {}; // return mock unsubscribe
+          return Promise.resolve(() => {}); // return mock unsubscribe
         });
 
         registerProductCrudCacheListener();
@@ -99,7 +97,7 @@ describe("Product Listener", () => {
           if (channel === "crud.deleted") {
             deletedCallback = callback as any;
           }
-          return () => {}; // return mock unsubscribe
+          return Promise.resolve(() => {}); // return mock unsubscribe
         });
 
         registerProductCrudCacheListener();
@@ -122,6 +120,7 @@ describe("Product Listener", () => {
         );
 
         consoleErrorSpy.mockRestore();
+        vi.mocked(revalidateTag).mockRestore();
       });
   });
 
