@@ -33,9 +33,6 @@ export async function sendEmail({
     const activeFrom = from || `${defaultSenderName} <${defaultSenderAddress}>`;
 
     if (!apiKey) {
-      console.log(
-        `[EMAIL_SIMULATION] (API Key not configured in Admin Settings)\nTo: ${Array.isArray(to) ? to.join(", ") : to}\nFrom: ${activeFrom}\nSubject: ${subject}\nBody: ${html.substring(0, 150)}...`
-      );
       return { success: false, error: "RESEND_API_KEY_NOT_CONFIGURED" };
     }
 
@@ -53,7 +50,6 @@ export async function sendEmail({
       return { success: false, error: error.message };
     }
 
-    console.log(`[EMAIL_SERVICE] Email sent successfully to ${to}. ID: ${data?.id}`);
     return { success: true, id: data?.id };
   } catch (error: any) {
     console.error("[EMAIL_SERVICE_EXCEPTION] Failed to send email:", error);
