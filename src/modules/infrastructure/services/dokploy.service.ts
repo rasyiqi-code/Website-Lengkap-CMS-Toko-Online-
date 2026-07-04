@@ -20,8 +20,6 @@ export const DokployService = {
         const domainLower = domain.toLowerCase().trim();
 
         try {
-            console.log(`[DOKPLOY_SERVICE] Mendaftarkan domain ${domainLower} ke Dokploy...`);
-            
             const response = await fetch(`${apiUrl}/api/domain.create`, {
                 method: "POST",
                 headers: {
@@ -44,8 +42,7 @@ export const DokployService = {
                 throw new Error(`Dokploy API merespons dengan status ${response.status}: ${errText}`);
             }
 
-            const data = await response.json();
-            console.log(`[DOKPLOY_SERVICE] Berhasil mendaftarkan domain ${domainLower} ke Dokploy:`, data);
+            await response.json();
             return true;
         } catch (error) {
             console.error(`[DOKPLOY_SERVICE] Error saat mendaftarkan domain ${domainLower}:`, error);
@@ -70,8 +67,6 @@ export const DokployService = {
         const domainLower = domain.toLowerCase().trim();
 
         try {
-            console.log(`[DOKPLOY_SERVICE] Mencari domainId untuk ${domainLower}...`);
-            
             // 1. Ambil semua domain yang terasosiasi dengan Compose ID
             const getUrl = `${apiUrl}/api/domain.byComposeId?composeId=${composeId}`;
             const getResponse = await fetch(getUrl, {
@@ -113,7 +108,6 @@ export const DokployService = {
             }
 
             const domainId = target.id;
-            console.log(`[DOKPLOY_SERVICE] Domain ditemukan dengan ID: ${domainId}. Menghapus dari Dokploy...`);
 
             // 2. Kirim permintaan penghapusan domain menggunakan domainId
             const deleteResponse = await fetch(`${apiUrl}/api/domain.delete`, {
@@ -132,7 +126,6 @@ export const DokployService = {
                 throw new Error(`Gagal menghapus domain di Dokploy (${deleteResponse.status}): ${errText}`);
             }
 
-            console.log(`[DOKPLOY_SERVICE] Berhasil menghapus domain ${domainLower} dari Dokploy.`);
             return true;
         } catch (error) {
             console.error("[DOKPLOY_SERVICE] Error saat menghapus domain:", domainLower, error);
