@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { Archive, RotateCcw } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { ConfirmActionButton } from "@/components/ui/ConfirmActionButton";
@@ -24,9 +25,8 @@ export function ArchiveProductButton({ productId, productName, isArchived }: Arc
 
             toast.success(isArchived ? "Produk berhasil dipulihkan" : "Produk berhasil diarsipkan");
             router.refresh();
-        } catch (error) {
-            alert((error as Error).message);
-            console.error(error);
+        } catch (error: any) {
+            toast.error(error.message || "Terjadi kesalahan saat mengubah status produk");
         }
     };
 

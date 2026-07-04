@@ -3,9 +3,9 @@ import path from 'path';
 
 export default defineConfig({
   test: {
-    environment: 'node',
-    setupFiles: ['dotenv/config'],
-    include: ['tests/unit/**/*.test.ts'],
+    environment: 'happy-dom',
+    setupFiles: ['dotenv/config', 'tests/setup/setup.ts'],
+    include: ['tests/unit/**/*.test.ts', 'tests/unit/**/*.test.tsx'],
     exclude: [
       '**/node_modules/**',
       '**/dist/**',
