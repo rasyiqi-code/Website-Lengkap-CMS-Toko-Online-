@@ -72,7 +72,7 @@
     "@types/node": "^24.13.2",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
-    "@types/testing-library__jest-dom": "^6.0.0",
+    "@types/testing-library__jest-dom": "5.14.9",
     "@vitest/coverage-v8": "^4.1.9",
     "dependency-cruiser": "^17.4.3",
     "eslint": "9.21.0",
