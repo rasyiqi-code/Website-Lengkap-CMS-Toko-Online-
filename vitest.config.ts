@@ -2,10 +2,13 @@ import { defineConfig } from 'vitest/config';
 import path from 'path';
 
 export default defineConfig({
+  esbuild: {
+    jsxInject: `import React from 'react'`,
+  },
   test: {
-    environment: 'node',
-    setupFiles: ['dotenv/config'],
-    include: ['tests/unit/**/*.test.ts'],
+    environment: 'jsdom',
+    setupFiles: ['dotenv/config', 'tests/setup.ts'],
+    include: ['tests/unit/**/*.test.{ts,tsx}'],
     exclude: [
       '**/node_modules/**',
       '**/dist/**',
@@ -18,7 +21,7 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'html', 'json'],
-      include: ['lib/**', 'app/api/**'],
+      include: ['lib/**', 'app/api/**', 'src/modules/catalog/ui/shop/ArchiveProductButton.tsx'],
       thresholds: {
         lines: 70,
         functions: 70,
