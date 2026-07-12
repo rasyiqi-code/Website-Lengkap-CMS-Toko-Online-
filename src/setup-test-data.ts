@@ -2,10 +2,10 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 async function main() {
-    // 1. Cek / seed plans jika kosong
-    const planCount = await prisma.plan.count();
-    if (planCount === 0) {
-        console.log("Seeding plans...");
+    // 1. Cek / seed plans jika paket "Pro" belum ada
+    const proPlanExists = await prisma.plan.findFirst({ where: { name: "Pro" } });
+    if (!proPlanExists) {
+        console.log("Seeding default plans...");
         // Jalankan seeding sederhana
         const plans = [
             {
@@ -52,11 +52,15 @@ async function main() {
             }
         ];
         for (const p of plans) {
-            await prisma.plan.create({ data: p as any });
+            await prisma.plan.upsert({
+                where: { id: p.id },
+                update: {},
+                create: p as any
+            });
         }
         console.log("Plans seeded!");
     } else {
-        console.log(`Terdapat ${planCount} plans di database.`);
+        console.log(`Paket Pro sudah tersedia di database.`);
     }
 
     // 2. Ambil user pertama
