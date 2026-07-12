@@ -3,7 +3,7 @@ import { db } from "@/lib/core/db";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { CreditCard, Globe, ArrowRight, ExternalLink, Calendar, PlusCircle, AlertTriangle } from "lucide-react";
+import { CreditCard, Globe, ExternalLink, Calendar, PlusCircle, AlertTriangle } from "lucide-react";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { TableContainer, THead, TBody, TR, TH, TD } from "@/components/ui/Table";
 
@@ -174,7 +174,7 @@ export default async function SubscriptionsPage() {
                         </TR>
                     </THead>
                     <TBody>
-                        {siteSubsData.map(({ site, subscription, statusLabel, statusColor, trialDaysLeft, graceDaysLeft, isTrial, isExpired }) => {
+                        {siteSubsData.map(({ site, subscription, statusLabel, statusColor, trialDaysLeft, graceDaysLeft, isExpired }) => {
                             const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
                             const billingUrl = `${protocol}://${site.subdomain}.${rootDomain}/dashboard/billing`;
 

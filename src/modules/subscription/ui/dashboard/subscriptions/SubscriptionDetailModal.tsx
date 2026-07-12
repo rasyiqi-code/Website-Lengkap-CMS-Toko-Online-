@@ -31,12 +31,6 @@ export function SubscriptionDetailModal({ selectedSub, rootDomain, onClose, onUp
     }, []);
 
     useEffect(() => {
-        if (selectedSub) {
-            setSelectedPlanId(selectedSub.planId || "");
-        }
-    }, [selectedSub?.id, selectedSub?.planId]);
-
-    useEffect(() => {
         if (isEditing && plans.length === 0) {
             Promise.resolve().then(() => fetchPlans());
         }
