@@ -91,7 +91,7 @@ export const getNavConfig = (siteId: string | null, settings?: SiteSettings | nu
                 { href: "/dashboard/sites", icon: <LayoutDashboard size={18} />, label: "Situs Saya", roles: ["owner", "editor", "user"] },
                 { href: "/onboarding", icon: <Plus size={18} />, label: "Situs Baru", roles: ["owner", "editor", "user"] },
                 { href: "/dashboard/billing", icon: <CreditCard size={18} />, label: "Tagihan", roles: ["owner", "editor", "user"] },
-                { href: "/dashboard/history-bill", icon: <FileText size={18} />, label: "Langganan", roles: ["owner", "editor", "user"] },
+                { href: "/dashboard/subscriptions", icon: <FileText size={18} />, label: "Langganan", roles: ["owner", "editor", "user"] },
                 { href: "/dashboard/finance", icon: <Wallet size={18} />, label: "Keuangan", roles: ["owner", "editor", "user"] },
                 { href: "/dashboard/affiliate", icon: <Network size={18} />, label: "Program Afiliasi", roles: ["owner", "editor", "user"] },
             ]

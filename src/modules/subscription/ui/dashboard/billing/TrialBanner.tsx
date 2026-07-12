@@ -9,6 +9,9 @@ interface TrialBannerProps {
 }
 
 export function TrialBanner({ trialDays, isLoading, onExtendTrial, canExtend }: TrialBannerProps) {
+    const isExpired = trialDays <= 0;
+    const graceDaysLeft = 30 + trialDays;
+
     return (
         <div className={`p-4 rounded-xl border flex flex-col md:flex-row items-center justify-between gap-4 shadow-sm transition-all duration-500 animate-in slide-in-from-top-4 ${trialDays <= 3 ? 'bg-orange-500/10 border-orange-500/30' : 'bg-primary/5 border-primary/20'}`}>
             <div className="flex items-center gap-3">
@@ -17,10 +20,16 @@ export function TrialBanner({ trialDays, isLoading, onExtendTrial, canExtend }: 
                 </div>
                 <div>
                     <p className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground">
-                        Trial Aktif ({trialDays} Hari Tersisa)
+                        {isExpired 
+                            ? `Trial Berakhir (${graceDaysLeft > 0 ? `${graceDaysLeft} Hari Masa Tenggang` : "Masa Tenggang Habis"})`
+                            : `Trial Aktif (${trialDays} Hari Tersisa)`
+                        }
                     </p>
                     <p className="text-[9px] text-muted-foreground font-medium opacity-70 mt-0.5 max-w-xl leading-relaxed">
-                        Akses fitur Premium gratis. Segera aktifkan paket berbayar agar situs Anda tetap online setelah trial selesai.
+                        {isExpired
+                            ? "Masa uji coba gratis Anda telah berakhir. Segera aktifkan paket berbayar agar situs Anda tetap online dan dapat diakses."
+                            : "Akses fitur Premium gratis. Segera aktifkan paket berbayar agar situs Anda tetap online setelah trial selesai."
+                        }
                     </p>
                 </div>
             </div>

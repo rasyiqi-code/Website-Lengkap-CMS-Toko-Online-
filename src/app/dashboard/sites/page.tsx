@@ -73,7 +73,10 @@ export default async function MySitesPage() {
     // Calculate global resource limit for this user
     // We look at the subscription with the highest limit
     const activeSubscriptions = await db.subscription.findMany({
-        where: { siteId: { in: ownedSiteIds }, status: "active" },
+        where: { 
+            siteId: { in: ownedSiteIds }, 
+            status: { in: ["active", "past_due"] } 
+        },
         select: {
             addonSlots: true,
             plan: {
@@ -85,9 +88,19 @@ export default async function MySitesPage() {
     });
     
     // Total Limit = Plan Max Sites + Purchased Addon Slots
-    const maxSitesAllowed = activeSubscriptions.length > 0 
-        ? Math.max(...activeSubscriptions.map(s => (s.plan?.maxSites || 1) + (s.addonSlots || 0)))
-        : 1; // Default for free/no subscription
+    const maxSitesAllowed = (() => {
+        if (activeSubscriptions.length === 0) return 1;
+        let max = 1;
+        for (const s of activeSubscriptions) {
+            const planLimit = s.plan?.maxSites ?? 1;
+            if (planLimit === -1) return -1;
+            const total = planLimit + (s.addonSlots || 0);
+            if (total > max) {
+                max = total;
+            }
+        }
+        return max;
+    })();
 
     const isLimitReached = maxSitesAllowed !== -1 && ownedSites.length >= maxSitesAllowed;
 
