@@ -373,6 +373,7 @@ export default function BillingClient({ plans, currentPlan, paymentMethods = [],
                                 onUpgrade={() => setPaymentSelection({ type: "upgrade" })}
                                 daysLeft={daysLeft}
                                 isTrial={!!isTrial}
+                                trialDays={trialDays}
                                 couponCode={couponCode}
                                 setCouponCode={setCouponCode}
                                 appliedCoupon={appliedCoupon}

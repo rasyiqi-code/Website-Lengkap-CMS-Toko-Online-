@@ -10,6 +10,7 @@ interface PlanPreviewCardProps {
     onUpgrade: () => void;
     daysLeft: number | null;
     isTrial: boolean;
+    trialDays?: number | null;
     // Coupon system
     couponCode: string;
     setCouponCode: (_val: string) => void;
@@ -28,6 +29,7 @@ export function PlanPreviewCard({
     onUpgrade,
     daysLeft,
     isTrial,
+    trialDays = null,
     couponCode,
     setCouponCode,
     appliedCoupon,
@@ -54,6 +56,33 @@ export function PlanPreviewCard({
     }
     const discountedPriceFormatted = Math.max(0, basePrice - discountAmount).toLocaleString("id-ID");
 
+    const isExpiredTrial = isTrial && trialDays !== null && trialDays <= 0;
+    const isNearExpiryPaid = !isTrial && daysLeft !== null && daysLeft <= 7;
+    const isExpiredPaid = !isTrial && daysLeft !== null && daysLeft <= 0;
+
+    const showButton = 
+        previewPlan?.id !== currentPlan?.id || 
+        isTrial || 
+        isNearExpiryPaid || 
+        isExpiredPaid;
+
+    const buttonLabel = (() => {
+        if (isLoading) return "Memproses...";
+        if (previewPlan?.id !== currentPlan?.id) {
+            return "Tingkatkan Sekarang";
+        }
+        if (isExpiredTrial) {
+            return "Aktifkan Paket (Masa Trial Habis)";
+        }
+        if (isTrial) {
+            return "Aktifkan & Bayar Sekarang";
+        }
+        if (isExpiredPaid || isNearExpiryPaid) {
+            return "Perpanjang Paket";
+        }
+        return "Tingkatkan Sekarang";
+    })();
+
     return (
         <div className="bg-card border border-border rounded-xl p-4 md:p-5 relative overflow-hidden shadow-md group min-h-[150px] transition-all duration-500 hover:border-primary/20">
             <div className="absolute top-0 right-0 p-3 opacity-5 group-hover:opacity-10 transition-opacity">
@@ -72,17 +101,13 @@ export function PlanPreviewCard({
                     </h2>
                     <p className="text-muted-foreground text-[10px] mt-1 font-medium max-w-md opacity-70 leading-relaxed">{previewPlan?.description || "Situs ini belum memiliki paket aktif."}</p>
 
-                    {(previewPlan?.id !== currentPlan?.id || isTrial) && (
+                    {showButton && (
                         <button
                             onClick={onUpgrade}
                             disabled={isLoading}
                             className="mt-3 flex items-center gap-1.5 bg-primary text-primary-foreground px-4 py-2 rounded-lg font-black text-[9px] uppercase tracking-[0.2em] hover:scale-102 active:scale-98 transition-all shadow-sm shadow-primary/10 group disabled:opacity-50"
                         >
-                            {isLoading 
-                                ? "Memproses..." 
-                                : (isTrial && previewPlan?.id === currentPlan?.id) 
-                                    ? "Aktifkan & Bayar Sekarang" 
-                                    : "Tingkatkan Sekarang"}
+                            {buttonLabel}
                             <ArrowUpRight size={12} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                         </button>
                     )}
@@ -95,7 +120,7 @@ export function PlanPreviewCard({
                     )}
 
                     {/* Coupon Input Box */}
-                    {(previewPlan?.id !== currentPlan?.id || isTrial) && previewPlan?.name?.toLowerCase() !== "free" && (
+                    {showButton && previewPlan?.name?.toLowerCase() !== "free" && (
                         <div className="mt-5 pt-4 border-t border-border/60 max-w-sm space-y-2">
                             <label htmlFor="coupon-input" className="text-[8px] font-black text-muted-foreground uppercase tracking-widest block mb-1">
                                 Miliki Kode Kupon / Promo?
