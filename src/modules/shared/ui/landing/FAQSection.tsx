@@ -40,7 +40,7 @@ export function FAQSection({ siteName, whatsappNumber }: FAQSectionProps) {
         },
         {
             question: "Bagaimana jika langganan habis atau masa trial selesai?",
-            answer: "Data Anda dijamin aman. Kami memberikan masa tenggang (Grace Period) selama 30 hari sebelum website otomatis diturunkan ke paket Gratis agar tetap aktif online.",
+            answer: "Data Anda dijamin aman. Kami memberikan masa tenggang selama 30 hari sebelum website otomatis diturunkan ke paket Gratis agar tetap aktif online.",
         },
         {
             question: "Apakah ada biaya transaksi atau komisi tersembunyi?",

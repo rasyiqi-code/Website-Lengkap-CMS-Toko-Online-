@@ -169,7 +169,7 @@ export default async function SubscriptionsPage() {
                             <TH>Situs / Domain</TH>
                             <TH>Paket & Addon</TH>
                             <TH>Status</TH>
-                            <TH>Masa Berlaku / Expired</TH>
+                            <TH>Masa Berlaku / Kedaluwarsa</TH>
                             <TH align="right">Aksi</TH>
                         </TR>
                     </THead>
