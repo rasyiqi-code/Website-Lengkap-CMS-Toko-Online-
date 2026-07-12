@@ -83,6 +83,25 @@ export function PlanPreviewCard({
         return "Tingkatkan Sekarang";
     })();
 
+    const buttonBgClass = (() => {
+        if (previewPlan?.id !== currentPlan?.id) {
+            return "bg-primary text-primary-foreground shadow-primary/10 hover:bg-primary/90";
+        }
+        if (isExpiredTrial) {
+            return "bg-amber-600 hover:bg-amber-700 text-white shadow-amber-600/10";
+        }
+        if (isTrial) {
+            return "bg-primary text-primary-foreground shadow-primary/10 hover:bg-primary/90";
+        }
+        if (isExpiredPaid) {
+            return "bg-rose-600 hover:bg-rose-700 text-white shadow-rose-600/10";
+        }
+        if (isNearExpiryPaid) {
+            return "bg-amber-600 hover:bg-amber-700 text-white shadow-amber-600/10";
+        }
+        return "bg-primary text-primary-foreground shadow-primary/10 hover:bg-primary/90";
+    })();
+
     return (
         <div className="bg-card border border-border rounded-xl p-4 md:p-5 relative overflow-hidden shadow-md group min-h-[150px] transition-all duration-500 hover:border-primary/20">
             <div className="absolute top-0 right-0 p-3 opacity-5 group-hover:opacity-10 transition-opacity">
@@ -105,7 +124,7 @@ export function PlanPreviewCard({
                         <button
                             onClick={onUpgrade}
                             disabled={isLoading}
-                            className="mt-3 flex items-center gap-1.5 bg-primary text-primary-foreground px-4 py-2 rounded-lg font-black text-[9px] uppercase tracking-[0.2em] hover:scale-102 active:scale-98 transition-all shadow-sm shadow-primary/10 group disabled:opacity-50"
+                            className={`mt-3 flex items-center gap-1.5 px-4 py-2 rounded-lg font-black text-[9px] uppercase tracking-[0.2em] hover:scale-102 active:scale-98 transition-all shadow-sm group disabled:opacity-50 ${buttonBgClass}`}
                         >
                             {buttonLabel}
                             <ArrowUpRight size={12} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
