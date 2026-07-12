@@ -11,6 +11,8 @@ interface PlanStatusBannerProps {
     isFree: boolean;
     isTrial?: boolean;
     trialEndsAt?: string | null;
+    isExpired?: boolean;
+    isGracePeriod?: boolean;
 }
 
 export function PlanStatusBanner({ 
@@ -19,8 +21,78 @@ export function PlanStatusBanner({
     allPlans, 
     isFree, 
     isTrial = false, 
-    trialEndsAt = null 
+    trialEndsAt = null,
+    isExpired = false,
+    isGracePeriod = false
 }: PlanStatusBannerProps) {
+    // --- Banner Expired (Masa tenggang habis) ---
+    if (isExpired) {
+        return (
+            <div className="bg-red-500/5 border border-red-500/20 rounded-2xl p-6 flex items-start gap-5 shadow-sm relative overflow-hidden group">
+                <div className="absolute top-0 right-0 p-4 opacity-5 rotate-12 transition-transform group-hover:rotate-0 duration-700 text-red-500">
+                    <Sparkles size={80} />
+                </div>
+                <div className="w-12 h-12 rounded-xl bg-red-500/10 flex items-center justify-center shrink-0 text-red-500 shadow-inner">
+                    <AlertCircle size={24} />
+                </div>
+                <div className="space-y-2 relative z-10 flex-1">
+                    <p className="text-xs font-black uppercase tracking-[0.2em] text-foreground flex items-center gap-2">
+                        Status Paket 
+                        <span className="px-2 py-0.5 bg-red-500 text-white text-[8px] rounded uppercase font-black tracking-widest animate-pulse">
+                            Kedaluwarsa
+                        </span>
+                    </p>
+                    <p className="text-[11px] text-muted-foreground font-medium opacity-80 leading-relaxed uppercase tracking-tight max-w-xl">
+                        Masa aktif paket <strong className="font-extrabold text-red-600">{plan}</strong> Anda telah berakhir sepenuhnya. 
+                        Akses publik situs Anda saat ini ditangguhkan. Lakukan perpanjangan untuk mengaktifkan kembali situs Anda.
+                    </p>
+                    <div className="pt-2">
+                        <Link 
+                            href="/dashboard/billing" 
+                            className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-500 active:scale-95 text-white px-5 py-2 rounded-lg text-[9px] font-black uppercase tracking-[0.2em] transition-all shadow-lg shadow-red-950/20"
+                        >
+                            <CreditCard size={12} /> Perpanjang Sekarang
+                        </Link>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    // --- Banner Grace Period (Masa tenggang) ---
+    if (isGracePeriod) {
+        return (
+            <div className="bg-orange-500/5 border border-orange-500/20 rounded-2xl p-6 flex items-start gap-5 shadow-sm relative overflow-hidden group">
+                <div className="absolute top-0 right-0 p-4 opacity-5 rotate-12 transition-transform group-hover:rotate-0 duration-700 text-orange-500">
+                    <Sparkles size={80} />
+                </div>
+                <div className="w-12 h-12 rounded-xl bg-orange-500/10 flex items-center justify-center shrink-0 text-orange-500 shadow-inner">
+                    <AlertCircle size={24} />
+                </div>
+                <div className="space-y-2 relative z-10 flex-1">
+                    <p className="text-xs font-black uppercase tracking-[0.2em] text-foreground flex items-center gap-2">
+                        Status Paket 
+                        <span className="px-2 py-0.5 bg-orange-500 text-white text-[8px] rounded uppercase font-black tracking-widest animate-pulse">
+                            Masa Tenggang
+                        </span>
+                    </p>
+                    <p className="text-[11px] text-muted-foreground font-medium opacity-80 leading-relaxed uppercase tracking-tight max-w-xl">
+                        Masa aktif paket <strong className="font-extrabold text-orange-600">{plan}</strong> Anda telah berakhir, namun situs Anda masih dapat diakses dalam masa tenggang 30 hari.
+                        Segera lakukan perpanjangan agar situs tidak ditangguhkan.
+                    </p>
+                    <div className="pt-2">
+                        <Link 
+                            href="/dashboard/billing" 
+                            className="inline-flex items-center gap-2 bg-orange-600 hover:bg-orange-500 active:scale-95 text-white px-5 py-2 rounded-lg text-[9px] font-black uppercase tracking-[0.2em] transition-all shadow-lg shadow-orange-950/20"
+                        >
+                            <CreditCard size={12} /> Perpanjang Sekarang
+                        </Link>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+    // --- Banner Trial Aktif ---
     if (isTrial) {
         const dateStr = trialEndsAt ? new Date(trialEndsAt).toLocaleDateString("id-ID", {
             day: "numeric",

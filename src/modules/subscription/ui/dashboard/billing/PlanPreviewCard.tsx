@@ -110,9 +110,21 @@ export function PlanPreviewCard({
 
             <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 relative z-10">
                 <div className="animate-in slide-in-from-left-4 duration-500 flex-1">
-                    <span className="px-2 py-0.5 bg-primary text-primary-foreground text-[7px] font-black uppercase tracking-[0.2em] rounded-full mb-1.5 inline-block shadow-sm shadow-primary/10">
+                    <span className={`px-2 py-0.5 text-[7px] font-black uppercase tracking-[0.2em] rounded-full mb-1.5 inline-block shadow-sm ${
+                        previewPlan?.id !== currentPlan?.id 
+                            ? "bg-primary text-primary-foreground shadow-primary/10"
+                            : isExpiredTrial || isExpiredPaid
+                            ? "bg-red-500 text-white shadow-red-500/10"
+                            : isNearExpiryPaid
+                            ? "bg-amber-500 text-white shadow-amber-500/10"
+                            : "bg-primary text-primary-foreground shadow-primary/10"
+                    }`}>
                         {previewPlan?.id === currentPlan?.id
-                            ? isTrial ? "Masa Uji Coba" : "Paket Aktif"
+                            ? isTrial 
+                                ? (isExpiredTrial ? "Trial Berakhir" : "Masa Uji Coba")
+                                : isExpiredPaid ? "Kedaluwarsa"
+                                : isNearExpiryPaid ? "Segera Berakhir"
+                                : "Paket Aktif"
                             : "Pratinjau Paket"}
                     </span>
                     <h2 className="text-xl md:text-2xl font-black text-foreground tracking-tighter uppercase leading-none">

@@ -83,7 +83,7 @@ export default async function SubscriptionsPage() {
                         graceDaysLeft = Math.ceil((graceEnd.getTime() - now.getTime()) / (1000 * 3600 * 24));
                     } else {
                         status = "expired";
-                        statusLabel = "Expired";
+                        statusLabel = "Kedaluwarsa";
                         statusColor = "text-red-500 bg-red-500/10 border-red-500/20";
                         isExpired = true;
                     }
@@ -106,7 +106,7 @@ export default async function SubscriptionsPage() {
                         graceDaysLeft = Math.ceil((graceEnd.getTime() - now.getTime()) / (1000 * 3600 * 24));
                     } else {
                         status = "expired";
-                        statusLabel = "Expired";
+                        statusLabel = "Kedaluwarsa";
                         statusColor = "text-red-500 bg-red-500/10 border-red-500/20";
                         isExpired = true;
                     }
@@ -116,7 +116,7 @@ export default async function SubscriptionsPage() {
             else {
                 if (sub.status === "cancelled" || sub.status === "expired") {
                     status = "expired";
-                    statusLabel = "Expired";
+                    statusLabel = "Kedaluwarsa";
                     statusColor = "text-red-500 bg-red-500/10 border-red-500/20";
                     isExpired = true;
                 } else if (sub.status === "past_due") {
@@ -257,13 +257,15 @@ export default async function SubscriptionsPage() {
                                         <a
                                             href={billingUrl}
                                             className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-300 shadow-md ${
-                                                isExpired || statusLabel === "Masa Tenggang"
-                                                    ? "bg-red-500 hover:bg-red-600 text-white shadow-red-500/10 hover:shadow-lg hover:shadow-red-500/20"
+                                                isExpired
+                                                    ? "bg-rose-500 hover:bg-rose-600 text-white shadow-rose-500/10 hover:shadow-lg hover:shadow-rose-500/20"
+                                                    : statusLabel === "Masa Tenggang"
+                                                    ? "bg-orange-500 hover:bg-orange-600 text-white shadow-orange-500/10 hover:shadow-lg hover:shadow-orange-500/20"
                                                     : "bg-sky-500 hover:bg-sky-600 text-white shadow-sky-500/10 hover:shadow-lg hover:shadow-sky-500/20"
                                             }`}
                                         >
                                             <span>
-                                                {isExpired || statusLabel === "Masa Tenggang" ? "Perbarui" : "Kelola"}
+                                                {isExpired ? "Aktifkan Kembali" : statusLabel === "Masa Tenggang" ? "Perpanjang Segera" : "Kelola"}
                                             </span>
                                             <ExternalLink size={10} />
                                         </a>

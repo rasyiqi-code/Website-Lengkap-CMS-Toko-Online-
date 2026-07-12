@@ -53,6 +53,8 @@ export default function SettingsForm({ initialSettings, initialPaymentData }: Se
     const [allPlans] = useState<any[]>(initialSettings?.allPlans || []);
     const [isTrial] = useState<boolean>(initialSettings?.isTrial || false);
     const [trialEndsAt] = useState<string | null>(initialSettings?.trialEndsAt || null);
+    const [isExpired] = useState<boolean>(initialSettings?.isExpired || false);
+    const [isGracePeriod] = useState<boolean>(initialSettings?.isGracePeriod || false);
     const [planFeatures] = useState<any>(initialSettings?.planFeatures || {});
     const [saving, setSaving] = useState(false);
     const [message, setMessage] = useState("");
@@ -170,6 +172,8 @@ export default function SettingsForm({ initialSettings, initialPaymentData }: Se
                             allPlans={allPlans}
                             isTrial={isTrial}
                             trialEndsAt={trialEndsAt}
+                            isExpired={isExpired}
+                            isGracePeriod={isGracePeriod}
                             planFeatures={planFeatures}
                         />
                     )}

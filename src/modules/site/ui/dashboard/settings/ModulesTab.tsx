@@ -34,6 +34,8 @@ interface ModulesTabProps {
     allPlans: any[];
     isTrial?: boolean;
     trialEndsAt?: string | null;
+    isExpired?: boolean;
+    isGracePeriod?: boolean;
     planFeatures: any;
 }
 
@@ -48,6 +50,8 @@ export const ModulesTab = ({
     allPlans,
     isTrial = false,
     trialEndsAt = null,
+    isExpired = false,
+    isGracePeriod = false,
     planFeatures
 }: ModulesTabProps) => {
     const isFree = planPrice === 0;
@@ -95,7 +99,9 @@ export const ModulesTab = ({
                 allPlans={allPlans} 
                 isFree={isFree} 
                 isTrial={isTrial} 
-                trialEndsAt={trialEndsAt} 
+                trialEndsAt={trialEndsAt}
+                isExpired={isExpired}
+                isGracePeriod={isGracePeriod}
             />
 
             {moduleCategories.map((cat, idx) => (

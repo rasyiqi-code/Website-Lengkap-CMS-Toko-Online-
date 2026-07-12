@@ -45,7 +45,7 @@ export function SiteCard({ site, rootDomain, onOpenSettings }: SiteCardProps) {
                 if (now <= graceEnd) {
                     return { label: "Masa Tenggang", class: "text-amber-500 bg-amber-500/10 border-amber-500/20" };
                 } else {
-                    return { label: "Expired", class: "text-red-500 bg-red-500/10 border-red-500/20" };
+                    return { label: "Kedaluwarsa", class: "text-red-500 bg-red-500/10 border-red-500/20" };
                 }
             }
         }
@@ -60,13 +60,13 @@ export function SiteCard({ site, rootDomain, onOpenSettings }: SiteCardProps) {
                 if (now <= graceEnd) {
                     return { label: "Masa Tenggang", class: "text-amber-500 bg-amber-500/10 border-amber-500/20" };
                 } else {
-                    return { label: "Expired", class: "text-red-500 bg-red-500/10 border-red-500/20" };
+                    return { label: "Kedaluwarsa", class: "text-red-500 bg-red-500/10 border-red-500/20" };
                 }
             }
         }
         
         if (sub.status === "cancelled" || sub.status === "expired") {
-            return { label: "Expired", class: "text-red-500 bg-red-500/10 border-red-500/20" };
+            return { label: "Kedaluwarsa", class: "text-red-500 bg-red-500/10 border-red-500/20" };
         }
         
         if (sub.status === "past_due") {
@@ -92,9 +92,9 @@ export function SiteCard({ site, rootDomain, onOpenSettings }: SiteCardProps) {
             <div className="p-4 space-y-3 flex-grow">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                        <span className="text-[8px] font-black text-primary uppercase bg-primary/10 border border-primary/20 px-2 py-1 rounded tracking-widest">
+                        <span className={`text-[8px] font-black uppercase px-2 py-1 rounded tracking-widest border ${statusInfo.class}`}>
                             {site.subscriptions[0]?.trialEndsAt && new Date(site.subscriptions[0].trialEndsAt) > new Date() 
-                                ? "Trial Period" 
+                                ? `Trial · ${planName}`
                                 : planName}
                         </span>
                         {site.customDomain && (
