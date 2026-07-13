@@ -46,6 +46,8 @@ export default async function MasterSettingsPage() {
             plan: billingContext.activePlanName,
             isTrial: billingContext.isTrial,
             trialEndsAt: billingContext.trialEndsAt ? String(billingContext.trialEndsAt) : null,
+            isExpired: billingContext.isExpired,
+            isGracePeriod: billingContext.isGracePeriod,
             planPrice: billingContext.activePlanPrice,
             allPlans: billingContext.allPlans,
             planFeatures: billingContext.planFeatures,

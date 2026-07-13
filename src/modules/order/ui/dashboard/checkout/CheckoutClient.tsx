@@ -77,19 +77,16 @@ export function CheckoutClient({
         if (typeof window !== "undefined" && (window as any).snap) {
             (window as any).snap.pay(token, {
                 onSuccess: function (result: any) {
-                    console.log("Snap success:", result);
                     setStatus("paid");
                     router.push("/dashboard/billing?status=success");
                 },
                 onPending: function (result: any) {
-                    console.log("Snap pending:", result);
                 },
                 onError: function (result: any) {
                     console.error("Snap error:", result);
                     alert("Pembayaran gagal atau dibatalkan.");
                 },
                 onClose: function () {
-                    console.log("Snap widget closed");
                 }
             });
         } else {

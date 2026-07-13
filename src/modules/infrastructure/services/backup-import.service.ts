@@ -93,9 +93,8 @@ export async function importBackupData(backupData: BackupData, currentAdminId?: 
 
         // 2. Masukkan Plans
         if (d.plans && d.plans.length > 0) {
-            for (const plan of d.plans) {
-                await db.plan.create({ data: plan });
-            }
+            // Optimized with createMany to avoid N+1 queries
+            await db.plan.createMany({ data: d.plans });
         }
 
         // 3. Masukkan Users (Tahap 1 - referredById bernilai null)
@@ -196,9 +195,7 @@ export async function importBackupData(backupData: BackupData, currentAdminId?: 
 
         // 8. SiteSettings
         if (d.siteSettings && d.siteSettings.length > 0) {
-            for (const ss of d.siteSettings) {
-                await db.siteSettings.create({ data: ss });
-            }
+            await db.siteSettings.createMany({ data: d.siteSettings });
         }
 
         // 9. SiteStatistics

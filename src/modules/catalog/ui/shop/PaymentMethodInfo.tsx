@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { CreditCard, Copy, Check, Info } from "lucide-react";
+import Image from "next/image";
 
 interface PaymentMethodInfoProps {
     brandColor?: string;
@@ -175,9 +176,10 @@ export default function PaymentMethodInfo({
                                                     className="bg-white px-1.5 py-0.5 rounded-md border border-slate-200/80 shadow-[0_1px_2px_rgba(0,0,0,0.01)] flex items-center justify-center h-6 hover:border-slate-300 transition-all flex-shrink-0" 
                                                     title={logo.name}
                                                 >
-                                                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                                                    <img 
+                                                    <Image
                                                         src={logo.src} 
+                                                        width={60}
+                                                        height={24}
                                                         className={`${logo.heightClass} w-auto object-contain`} 
                                                         alt={logo.name} 
                                                     />
@@ -302,9 +304,10 @@ export default function PaymentMethodInfo({
                                             className="bg-white px-1.5 py-0.5 rounded-md border border-slate-200/80 shadow-[0_1px_2px_rgba(0,0,0,0.01)] flex items-center justify-center h-6 hover:border-slate-300 transition-all flex-shrink-0" 
                                             title={logo.name}
                                         >
-                                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                                            <img 
+                                            <Image
                                                 src={logo.src} 
+                                                width={60}
+                                                height={24}
                                                 className={`${logo.heightClass} w-auto object-contain`} 
                                                 alt={logo.name} 
                                             />

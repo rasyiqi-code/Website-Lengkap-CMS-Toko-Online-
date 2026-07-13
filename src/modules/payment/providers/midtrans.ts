@@ -94,13 +94,6 @@ export class MidtransPaymentWrapper {
                     parameter.bank_transfer = { bank: "bca" };
                 }
 
-                console.log("[MIDTRANS] Core API request:", JSON.stringify({
-                    isProduction,
-                    serverKeyPrefix: serverKey?.substring(0, 14) + "...",
-                    url: isProduction ? "https://api.midtrans.com/v2/charge" : "https://api.sandbox.midtrans.com/v2/charge",
-                    parameter
-                }, null, 2));
-
                 const response = await coreApi.charge(parameter);
 
                 let vaNumber = undefined;

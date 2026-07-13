@@ -11,7 +11,7 @@
  * NB this route is public, and you will need to add authentication
  */
 
-import React from "react";
+// import React from "react";
 import "@crediblemark/build/credbuild.css";
 import { CredbuildClient } from "@/modules/page/ui/credbuild/CredbuildClient";
 import { Metadata } from "next";
