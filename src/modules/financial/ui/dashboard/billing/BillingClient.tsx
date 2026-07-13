@@ -248,6 +248,19 @@ export default function BillingClient({ plans, currentPlan, paymentMethods = [],
     const trialDays = getTrialDays();
     const daysLeft = getDaysRemaining();
     const isTrial = currentPlan && !currentPlan.endDate && currentPlan.trialEndsAt;
+    const isCurrentPlanExpired = (() => {
+        if (!currentPlan) return false;
+        if (currentPlan.status === "expired" || currentPlan.status === "cancelled") return true;
+        
+        const now = new Date();
+        if (currentPlan.trialEndsAt && now > new Date(currentPlan.trialEndsAt)) {
+            return true;
+        }
+        if (currentPlan.endDate && now > new Date(currentPlan.endDate)) {
+            return true;
+        }
+        return false;
+    })();
 
     const handleExtendTrial = async () => {
         setIsLoading(true);
@@ -409,6 +422,7 @@ export default function BillingClient({ plans, currentPlan, paymentMethods = [],
                                 plans={plans}
                                 currentPlan={currentPlan}
                                 previewPlan={previewPlan}
+                                isExpired={isCurrentPlanExpired}
                                 setPreviewPlan={(p) => {
                                     setPreviewPlan(p);
                                     setCouponCode("");

@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { proxyMediaApi } from '@/modules/media/controllers/media-api.controller';
 import { NextRequest } from 'next/server';
 
@@ -7,6 +7,16 @@ vi.mock('@/lib/media/r2', () => ({
 }));
 
 describe('media proxy SSRF validation', () => {
+  beforeEach(() => {
+    vi.spyOn(globalThis, 'fetch').mockImplementation(() => 
+      Promise.resolve(new Response('image-data', { status: 200 }))
+    );
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   const mockRequest = (urlParam: string) => {
     return new NextRequest(`http://localhost:3000/api/media/proxy?url=${encodeURIComponent(urlParam)}`);
   };

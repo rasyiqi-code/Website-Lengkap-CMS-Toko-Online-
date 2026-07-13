@@ -8,20 +8,23 @@ interface PlansListProps {
     currentPlan: any | null;
     previewPlan: Plan | null;
     setPreviewPlan: (_plan: Plan) => void;
+    isExpired?: boolean;
 }
 
 export function PlansList({
     plans,
     currentPlan,
     previewPlan,
-    setPreviewPlan
+    setPreviewPlan,
+    isExpired = false
 }: PlansListProps) {
     return (
         <div className="bg-card border border-border rounded-xl p-4 shadow-md space-y-4">
             <h3 className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] px-1 border-l-2 border-primary pl-3">Pilihan Paket</h3>
             <div className="space-y-2">
                 {plans.filter(p => Number(p.price) > 0).map((plan) => {
-                    const isActive = plan.id === currentPlan?.id;
+                    const isRegistered = plan.id === currentPlan?.id;
+                    const isActive = isRegistered && !isExpired;
                     const isPreviewing = plan.id === previewPlan?.id;
 
                     return (
@@ -77,11 +80,15 @@ export function PlansList({
                                     ? "bg-primary text-primary-foreground shadow-sm shadow-primary/10"
                                     : "bg-foreground text-background hover:bg-primary hover:text-primary-foreground"
                                     }`}>
-                                    {isPreviewing ? "Sedang Dilihat" : "Pilih Paket"} <ArrowUpRight size={10} />
+                                    {isPreviewing 
+                                        ? "Sedang Dilihat" 
+                                        : isRegistered 
+                                            ? "Perpanjang Paket" 
+                                            : "Pilih Paket"} <ArrowUpRight size={10} />
                                 </button>
                             ) : (
                                 <div className="w-full mt-3.5 border border-primary/20 bg-primary/10 text-primary text-[8px] font-black uppercase tracking-[0.2em] py-2 rounded-lg flex items-center justify-center gap-2">
-                                    Paket Aktif Anda
+                                    Paket Anda Saat Ini
                                 </div>
                             )}
                         </div>
