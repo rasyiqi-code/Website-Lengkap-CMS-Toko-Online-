@@ -2,6 +2,9 @@
 # Exit immediately if a command exits with a non-zero status
 set -e
 
+echo "🚀 Checking database connectivity..."
+bun prisma/wait-db.js
+
 echo "🚀 Running database migrations (Prisma)..."
 bunx prisma migrate deploy
 
