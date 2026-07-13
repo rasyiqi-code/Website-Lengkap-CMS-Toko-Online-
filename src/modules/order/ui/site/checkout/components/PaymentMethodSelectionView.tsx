@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { AlertCircle, ChevronDown, Loader2, RefreshCw, Zap } from "lucide-react";
-import Image from "next/image";
 import { type PaymentMethod } from "../types";
 import { getCategoryIcon } from "../helpers/paymentHelpers";
 
