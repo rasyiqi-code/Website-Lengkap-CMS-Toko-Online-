@@ -1,5 +1,6 @@
 import { defineConfig } from 'vitest/config';
 import path from 'path';
+import react from '@vitejs/plugin-react';
 
 const aliases = {
   '@/lib/modules/catalog/client': path.resolve(__dirname, './src/modules/catalog'),
@@ -20,12 +21,10 @@ const aliases = {
 };
 
 export default defineConfig({
-  esbuild: {
-    jsxInject: `import React from 'react'`,
-  },
+  plugins: [react()],
   test: {
     environment: 'node',
-    setupFiles: ['dotenv/config'],
+    setupFiles: ['dotenv/config', 'tests/setup.ts', 'tests/setup/test-setup.ts'],
     include: ['tests/unit/**/*.test.{ts,tsx}'],
     exclude: [
       '**/node_modules/**',
@@ -39,7 +38,12 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'html', 'json'],
-      include: ['lib/**', 'app/api/**', 'src/modules/catalog/ui/shop/ArchiveProductButton.tsx'],
+      include: [
+        'lib/**',
+        'app/api/**',
+        'src/modules/catalog/ui/shop/ArchiveProductButton.tsx',
+        'src/modules/notification/ui/**'
+      ],
       thresholds: {
         lines: 70,
         functions: 70,
