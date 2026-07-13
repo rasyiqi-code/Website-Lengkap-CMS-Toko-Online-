@@ -30,8 +30,12 @@ export default function FloatingChat({ settings }: FloatingChatProps) {
     const activeSettings = settings || internalSettings;
     const targetNumber = activeSettings?.whatsappNumber || activeSettings?.socialWhatsapp;
     
-    // Check if current page is product detail page to hide the floating WA button entirely
-    const isProductPage = typeof window !== "undefined" && window.location.pathname.includes("/products/");
+    // Gunakan state untuk mengecek pathname agar tidak ada hydration mismatch (#418)
+    const [isProductPage, setIsProductPage] = useState(false);
+
+    useEffect(() => {
+        setIsProductPage(window.location.pathname.includes("/products/"));
+    }, []);
 
     if (!activeSettings?.showFloatingChat || !targetNumber || isProductPage) return null;
 
