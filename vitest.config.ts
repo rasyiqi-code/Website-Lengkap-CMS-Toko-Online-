@@ -5,7 +5,7 @@ export default defineConfig({
   test: {
     environment: 'node',
     setupFiles: ['dotenv/config'],
-    include: ['tests/unit/**/*.test.ts'],
+    include: ['tests/unit/**/*.test.{ts,tsx}'],
     exclude: [
       '**/node_modules/**',
       '**/dist/**',
