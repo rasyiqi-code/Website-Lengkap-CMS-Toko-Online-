@@ -123,14 +123,20 @@ export async function proxyMediaApi(req: NextRequest) {
         "ui-avatars.com"
     ];
     if (settings.publicDomain) {
-        const domainOnly = settings.publicDomain.replace(/^https?:\/\//, "").split("/")[0];
+        const domainOnly = settings.publicDomain.replace(/^https?:\/\//, "").split("/")[0].split(":")[0];
         if (domainOnly) {
             allowedDomains.push(domainOnly);
         }
     }
 
-    const targetUrl = url.replace(/^https?:\/\//, "");
-    const isAllowed = allowedDomains.some((domain) => targetUrl.startsWith(domain));
+    let parsedUrl: URL;
+    try {
+        parsedUrl = new URL(url);
+    } catch {
+        return new NextResponse("Invalid URL", { status: 400 });
+    }
+
+    const isAllowed = allowedDomains.includes(parsedUrl.hostname);
 
     if (!isAllowed) {
         console.warn(`Blocked unauthorized proxy request for: ${url}`);
