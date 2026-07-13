@@ -90,12 +90,13 @@ export default async function SiteLayout({
     const pathname = headerList.get("x-url") || "/";
 
     // Parallelize all remaining site-specific data fetching
-    const [accessStatus, settings, mainMenu, footerMenu, page] = await Promise.all([
+    const [accessStatus, settings, mainMenu, footerMenu, page, platformSettings] = await Promise.all([
         getSiteAccessStatus(),
         getSiteSettings(siteId),
         getMenu("main", siteId),
         getMenu("footer", siteId),
-        getPage(pathname, siteId)
+        getPage(pathname, siteId),
+        getPlatformSettings()
     ]);
 
     // Redirect from subdomain to custom domain IF verified
@@ -107,7 +108,7 @@ export default async function SiteLayout({
     
     // Only show expired view if we are on a tenant subdomain/domain
     if (subdomain && (accessStatus === "expired" || accessStatus === "grace_period" || accessStatus === "no_subscription")) {
-        return <ExpiredSiteView status={accessStatus} siteName={site?.name || "Website"} platformName={settings.siteName} />;
+        return <ExpiredSiteView status={accessStatus} siteName={site?.name || "Website"} platformName={platformSettings?.siteName || "SitusBisnis"} />;
     }
 
     const hideHeader = page?.metaData?.some(m => m.key === "hide_header" && m.value === "true") || false;
