@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { CreditCard, History } from "lucide-react";
 import { PageHeader } from "@/components/ui/PageHeader";
@@ -229,38 +229,40 @@ export default function BillingClient({ plans, currentPlan, paymentMethods = [],
         }
     };
 
-    const getTrialDays = () => {
-        if (!currentPlan?.trialEndsAt) return null;
-        const end = new Date(currentPlan.trialEndsAt);
-        const now = new Date();
-        const diff = end.getTime() - now.getTime();
-        return Math.ceil(diff / (1000 * 3600 * 24));
-    };
+    // Gunakan state agar kalkulasi new Date() tidak menyebabkan hydration mismatch (#418)
+    const [trialDays, setTrialDays] = useState<number | null>(null);
+    const [daysLeft, setDaysLeft] = useState<number | null>(null);
+    const [isTrial, setIsTrial] = useState(false);
+    const [isCurrentPlanExpired, setIsCurrentPlanExpired] = useState(false);
 
-    const getDaysRemaining = () => {
-        if (!currentPlan?.endDate) return null;
-        const end = new Date(currentPlan.endDate);
+    useEffect(() => {
         const now = new Date();
-        const diff = end.getTime() - now.getTime();
-        return Math.ceil(diff / (1000 * 3600 * 24));
-    };
 
-    const trialDays = getTrialDays();
-    const daysLeft = getDaysRemaining();
-    const isTrial = currentPlan && !currentPlan.endDate && currentPlan.trialEndsAt;
-    const isCurrentPlanExpired = (() => {
-        if (!currentPlan) return false;
-        if (currentPlan.status === "expired" || currentPlan.status === "cancelled") return true;
-        
-        const now = new Date();
-        if (currentPlan.trialEndsAt && now > new Date(currentPlan.trialEndsAt)) {
-            return true;
+        // Hitung sisa hari trial
+        if (currentPlan?.trialEndsAt) {
+            const end = new Date(currentPlan.trialEndsAt);
+            setTrialDays(Math.ceil((end.getTime() - now.getTime()) / (1000 * 3600 * 24)));
         }
-        if (currentPlan.endDate && now > new Date(currentPlan.endDate)) {
-            return true;
+
+        // Hitung sisa hari langganan
+        if (currentPlan?.endDate) {
+            const end = new Date(currentPlan.endDate);
+            setDaysLeft(Math.ceil((end.getTime() - now.getTime()) / (1000 * 3600 * 24)));
         }
-        return false;
-    })();
+
+        // Status trial
+        setIsTrial(!!(currentPlan && !currentPlan.endDate && currentPlan.trialEndsAt));
+
+        // Status kedaluwarsa
+        const expired = (() => {
+            if (!currentPlan) return false;
+            if (currentPlan.status === "expired" || currentPlan.status === "cancelled") return true;
+            if (currentPlan.trialEndsAt && now > new Date(currentPlan.trialEndsAt)) return true;
+            if (currentPlan.endDate && now > new Date(currentPlan.endDate)) return true;
+            return false;
+        })();
+        setIsCurrentPlanExpired(expired);
+    }, [currentPlan]);
 
     const handleExtendTrial = async () => {
         setIsLoading(true);
