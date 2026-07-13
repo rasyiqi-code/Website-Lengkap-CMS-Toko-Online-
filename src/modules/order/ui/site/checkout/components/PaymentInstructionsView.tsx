@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 import { AlertCircle, Check, Copy } from "lucide-react";
 import { getCategoryLabel, getPaymentInstructions } from "../helpers/paymentHelpers";
 
@@ -50,10 +51,11 @@ export function PaymentInstructionsView({
             {isQris ? (
                 <div className="flex flex-col items-center justify-center p-4 bg-gray-50 border border-gray-200 rounded-xl space-y-3">
                     {qrCodeImageUrl ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img 
+                        <Image
                             src={qrCodeImageUrl} 
                             alt="QRIS QR Code" 
+                            width={192}
+                            height={192}
                             className="w-48 h-48 object-contain rounded-md border bg-white p-2 shadow-sm"
                         />
                     ) : (
