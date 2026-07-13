@@ -1,4 +1,4 @@
-import { defineConfig } from 'vitest/config';
+import { defineConfig, defaultExclude } from 'vitest/config';
 import path from 'path';
 
 const aliases = {
@@ -24,6 +24,7 @@ export default defineConfig({
     jsxInject: `import React from 'react'`,
   },
   test: {
+    exclude: [...defaultExclude, 'tests/e2e/**'],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'html', 'json'],
