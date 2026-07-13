@@ -48,8 +48,10 @@ export default async function MySitesPage() {
         }
 
         const sub = await db.subscription.findFirst({
-            where: { siteId: site.id, status: "active" },
+            where: { siteId: site.id, status: { in: ["active", "past_due"] } },
             select: {
+                status: true,
+                endDate: true,
                 trialEndsAt: true,
                 plan: {
                     select: {
