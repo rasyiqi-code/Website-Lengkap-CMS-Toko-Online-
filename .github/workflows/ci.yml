@@ -265,10 +265,12 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: Trigger Dokploy Deploy Webhook
+        env:
+          DEPLOY_WEBHOOK: ${{ secrets.DOKPLOY_DEPLOY_WEBHOOK }}
         run: |
-          if [ -n "${{ secrets.DOKPLOY_DEPLOY_WEBHOOK }}" ]; then
+          if [ -n "$DEPLOY_WEBHOOK" ]; then
             echo "🚀 Triggering Dokploy deploy webhook..."
-            curl -f -X POST "${{ secrets.DOKPLOY_DEPLOY_WEBHOOK }}"
+            curl -f -X POST "$DEPLOY_WEBHOOK"
           else
             echo "⚠️ DOKPLOY_DEPLOY_WEBHOOK secret is not set, skipping webhook trigger."
           fi
