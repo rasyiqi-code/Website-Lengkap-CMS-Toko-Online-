@@ -5,7 +5,7 @@ export async function initPaymentListeners() {
     try {
       if (data && data.siteId) {
         const { revalidateTag } = await import("next/cache");
-        revalidateTag(`site-${data.siteId}`);
+        revalidateTag(`site-${data.siteId}`, "default");
         console.log(`[PaymentListener] Invalidated cache for site: ${data.siteId} following completed payment: ${data.transactionId}`);
       }
     } catch (error) {
