@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Copy, Check, Link as LinkIcon } from "lucide-react";
 import { TableContainer, THead, TBody, TR, TH, TD } from "@/components/ui/Table";
@@ -8,8 +8,11 @@ import { TableContainer, THead, TBody, TR, TH, TD } from "@/components/ui/Table"
 export default function UserAffiliateView({ user }: { user: any }) {
     const [copied, setCopied] = useState(false);
     
-    // Default to localhost if window is undefined (SSR)
-    const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
+    // Gunakan state agar tidak ada hydration mismatch (SSR vs client)
+    const [baseUrl, setBaseUrl] = useState("");
+    useEffect(() => {
+        setBaseUrl(window.location.origin);
+    }, []);
     const referralLink = `${baseUrl}/?ref=${user.referralCode}`;
 
     const copyToClipboard = () => {

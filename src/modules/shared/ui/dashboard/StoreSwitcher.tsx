@@ -24,7 +24,13 @@ export default function StoreSwitcher({ currentSiteId, currentSiteName }: StoreS
     const [isLoading, setIsLoading] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
 
-    const rootDomain = getRootDomain(typeof window !== "undefined" ? window.location.host : null);
+    // Simpan host di state agar tidak ada hydration mismatch (SSR vs client)
+    const [host, setHost] = useState<string | null>(null);
+    useEffect(() => {
+        setHost(window.location.host);
+    }, []);
+
+    const rootDomain = getRootDomain(host);
 
     const fetchSites = async () => {
         setIsLoading(true);
@@ -55,7 +61,7 @@ export default function StoreSwitcher({ currentSiteId, currentSiteName }: StoreS
 
     const getSiteUrl = (site: Site) => {
         const domain = site.customDomain || `${site.subdomain}.${rootDomain}`;
-        const protocol = getProtocol(typeof window !== "undefined" ? window.location.host : null);
+        const protocol = getProtocol(host);
         return `${protocol}://${domain}/dashboard`;
     };
 
@@ -169,7 +175,7 @@ export default function StoreSwitcher({ currentSiteId, currentSiteName }: StoreS
                     {/* Footer */}
                     <div className="p-0.5 border-t border-border bg-muted/20 space-y-0.5">
                         <a
-                            href={typeof window !== "undefined" ? `${window.location.protocol}//${rootDomain}/dashboard` : "/dashboard"}
+                            href={host ? `${window.location.protocol}//${rootDomain}/dashboard` : "/dashboard"}
                             className="flex items-center gap-2 p-1.5 rounded-lg hover:bg-primary/10 hover:text-primary transition-all group focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary/50 outline-none"
                         >
                             <div className="w-7 h-7 rounded-md bg-background border border-border flex items-center justify-center group-hover:border-primary/30" aria-hidden="true">
