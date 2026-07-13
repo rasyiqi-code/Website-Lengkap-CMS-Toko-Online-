@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 import { AlertCircle, ChevronDown, Loader2, RefreshCw, Zap } from "lucide-react";
 import { PaymentMethod } from "./types";
 import { getCategoryIcon } from "./utils";
@@ -121,12 +122,13 @@ export function PaymentMethodSelector({
                                                             : "border-border hover:border-border/80 bg-background hover:bg-muted/30"
                                                     }`}
                                                 >
-                                                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                                                    <img
+                                                    <Image
                                                         src={method.paymentImage}
                                                         alt={method.paymentName}
+                                                        width={40}
+                                                        height={28}
                                                         className="w-10 h-7 object-contain rounded-sm"
-                                                        onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+                                                        onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
                                                     />
                                                     <div className="flex-1 min-w-0">
                                                         <p className="text-[11px] font-black text-foreground truncate">{method.paymentName}</p>
