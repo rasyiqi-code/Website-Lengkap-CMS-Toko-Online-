@@ -3,6 +3,7 @@ name: situsbisnis
 services:
   nextjs-app:
     image: ghcr.io/crediblemark-official/situsbisnis:latest
+    pull_policy: always
     container_name: situsbisnis-v2
     restart: unless-stopped
     environment:
