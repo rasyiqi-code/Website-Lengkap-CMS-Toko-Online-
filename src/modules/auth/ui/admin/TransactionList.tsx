@@ -103,13 +103,13 @@ export default function TransactionList({ initialTransactions }: { initialTransa
                     {filteredTransactions.map((tx) => (
                         <TR key={tx.id}>
                             <TD>
-                                <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary">
-                                        <Globe size={18} />
+                                <div className="flex items-center gap-2">
+                                    <div className="w-8 h-8 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shrink-0">
+                                        <Globe size={14} />
                                     </div>
-                                    <div>
-                                        <p className="text-sm font-bold text-foreground">{tx.site?.name}</p>
-                                        <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-tight">
+                                    <div className="min-w-0">
+                                        <p className="text-xs font-bold text-foreground truncate max-w-[150px]">{tx.site?.name}</p>
+                                        <p className="text-[9px] text-muted-foreground uppercase font-bold tracking-tight truncate max-w-[150px]">
                                             {tx.site?.subdomain}.{process.env.NEXT_PUBLIC_ROOT_DOMAIN || "localhost:3000"}
                                         </p>
                                     </div>
@@ -127,32 +127,32 @@ export default function TransactionList({ initialTransactions }: { initialTransa
                                             + Addon {tx.addonType} (x{tx.addonQuantity})
                                         </span>
                                     ) : (
-                                        <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest opacity-60">
+                                        <p className="text-[9px] text-muted-foreground uppercase font-bold tracking-widest opacity-60">
                                             {tx.plan?.interval || 'Bulanan'}
                                         </p>
                                     )}
                                 </div>
                             </TD>
                             <TD>
-                                <p className="text-sm font-black text-foreground">
+                                <p className="text-xs font-black text-foreground">
                                     Rp {Number(tx.amount).toLocaleString()}
                                 </p>
-                                <span className={`text-[8px] font-black px-1.5 py-0.5 rounded uppercase tracking-wider mt-1 inline-block ${
+                                <span className={`text-[8px] font-black px-1.5 py-0.5 rounded uppercase tracking-wider mt-0.5 inline-block ${
                                     tx.paymentMethod === "manual"
                                         ? "bg-slate-500/10 text-slate-500 border border-slate-500/20"
                                         : "bg-blue-500/10 text-blue-500 border border-blue-500/20"
                                 }`}>
-                                    {tx.paymentMethod === "manual" ? "Manual Transfer" : "Payment Gateway"}
+                                    {tx.paymentMethod === "manual" ? "Manual" : "Gateway"}
                                 </span>
                             </TD>
                             <TD>
-                                <div className="flex items-center gap-3">
+                                <div className="flex items-center gap-2">
                                     {tx.paymentMethod === "manual" ? (
                                         <>
                                             {tx.proofOfPayment ? (
                                                 <button
                                                     onClick={() => setSelectedProof(tx.proofOfPayment)}
-                                                    className="w-12 h-12 rounded-lg border border-border overflow-hidden relative group/img cursor-zoom-in shrink-0"
+                                                    className="w-9 h-9 rounded-md border border-border overflow-hidden relative group/img cursor-zoom-in shrink-0"
                                                 >
                                                     <Image
                                                         src={tx.proofOfPayment}
@@ -161,67 +161,68 @@ export default function TransactionList({ initialTransactions }: { initialTransa
                                                         className="object-cover group-hover/img:scale-110 transition-transform"
                                                     />
                                                     <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-opacity">
-                                                        <Eye size={14} className="text-white" />
+                                                        <Eye size={12} className="text-white" />
                                                     </div>
                                                 </button>
                                             ) : (
-                                                <div className="w-12 h-12 rounded-lg bg-muted border border-border flex items-center justify-center text-muted-foreground/30 shrink-0">
-                                                    <ImageIcon size={18} />
+                                                <div className="w-9 h-9 rounded-md bg-muted border border-border flex items-center justify-center text-muted-foreground/30 shrink-0">
+                                                    <ImageIcon size={14} />
                                                 </div>
                                             )}
-                                            <div className="max-w-[200px]">
-                                                <p className="text-[10px] text-muted-foreground italic line-clamp-2">
+                                            <div className="max-w-[180px]">
+                                                <p className="text-[9px] text-muted-foreground italic line-clamp-1">
                                                     {tx.notes || "Tidak ada catatan."}
                                                 </p>
-                                                <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-tight mt-1">
+                                                <p className="text-[8px] font-bold text-muted-foreground/60 uppercase tracking-tight mt-0.5">
                                                     {new Date(tx.createdAt).toLocaleString()}
                                                 </p>
                                             </div>
                                         </>
                                     ) : (
-                                        <div className="flex items-start gap-2.5 bg-blue-500/5 border border-blue-500/10 rounded-lg p-2.5 max-w-[240px]">
-                                            <CheckCircle2 size={16} className="text-blue-500 shrink-0 mt-0.5" />
+                                        <>
+                                            <div className="w-9 h-9 rounded-md bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-500 shrink-0">
+                                                <CheckCircle2 size={14} />
+                                            </div>
                                             <div>
-                                                <p className="text-[10px] font-black text-blue-500 uppercase tracking-wider leading-none">Verifikasi Sistem</p>
-                                                <p className="text-[9px] text-muted-foreground mt-1 leading-tight">Transaksi otomatis tervalidasi via Midtrans Gateway.</p>
-                                                <p className="text-[8px] font-bold text-muted-foreground/75 uppercase tracking-tight mt-1">
+                                                <p className="text-[10px] font-bold text-blue-500 uppercase tracking-wider">Verifikasi Sistem (Midtrans)</p>
+                                                <p className="text-[8px] font-bold text-muted-foreground/60 uppercase tracking-tight mt-0.5">
                                                     {new Date(tx.createdAt).toLocaleString()}
                                                 </p>
                                             </div>
-                                        </div>
+                                        </>
                                     )}
                                 </div>
                             </TD>
                             <TD>
                                 {tx.status === 'approved' ? (
-                                    <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
-                                        <CheckCircle2 size={10} />
-                                        <span className="text-[9px] font-bold uppercase">Disetujui</span>
+                                    <div className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
+                                        <CheckCircle2 size={9} />
+                                        <span className="text-[8px] font-bold uppercase">Disetujui</span>
                                     </div>
                                 ) : tx.status === 'rejected' ? (
-                                    <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-destructive/10 text-destructive border border-destructive/20">
-                                        <XCircle size={10} />
-                                        <span className="text-[9px] font-bold uppercase">Ditolak</span>
+                                    <div className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-destructive/10 text-destructive border border-destructive/20">
+                                        <XCircle size={9} />
+                                        <span className="text-[8px] font-bold uppercase">Ditolak</span>
                                     </div>
                                 ) : (
-                                    <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-500 border border-amber-500/20">
-                                        <Clock size={10} />
-                                        <span className="text-[9px] font-bold uppercase">Menunggu</span>
+                                    <div className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-amber-500/10 text-amber-500 border border-amber-500/20">
+                                        <Clock size={9} />
+                                        <span className="text-[8px] font-bold uppercase">Menunggu</span>
                                     </div>
                                 )}
                             </TD>
                             <TD align="right">
                                 {tx.status === 'pending' && tx.paymentMethod === 'manual' && (
-                                    <div className="flex items-center justify-end gap-2">
+                                    <div className="flex items-center justify-end gap-1.5">
                                         <button
                                             onClick={() => {
                                                 setActionTarget({ id: tx.id, type: 'rejected' });
                                                 setShowConfirmModal(true);
                                             }}
                                             disabled={isUpdating === tx.id}
-                                            className="p-2 rounded-lg bg-destructive/5 text-destructive hover:bg-destructive hover:text-white transition-all disabled:opacity-50"
+                                            className="p-1.5 rounded bg-destructive/5 text-destructive hover:bg-destructive hover:text-white transition-all disabled:opacity-50"
                                         >
-                                            <XCircle size={16} />
+                                            <XCircle size={14} />
                                         </button>
                                         <button
                                             onClick={() => {
@@ -229,9 +230,9 @@ export default function TransactionList({ initialTransactions }: { initialTransa
                                                 setShowConfirmModal(true);
                                             }}
                                             disabled={isUpdating === tx.id}
-                                            className="p-2 rounded-lg bg-emerald-500/5 text-emerald-500 hover:bg-emerald-500 hover:text-white transition-all disabled:opacity-50 shadow-lg shadow-emerald-500/10"
+                                            className="p-1.5 rounded bg-emerald-500/5 text-emerald-500 hover:bg-emerald-500 hover:text-white transition-all disabled:opacity-50 shadow-lg shadow-emerald-500/10"
                                         >
-                                            <CheckCircle2 size={16} />
+                                            <CheckCircle2 size={14} />
                                         </button>
                                     </div>
                                 )}
