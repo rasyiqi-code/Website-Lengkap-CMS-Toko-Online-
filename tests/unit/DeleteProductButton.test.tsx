@@ -22,8 +22,6 @@ vi.mock('react-hot-toast', () => ({
     }
 }));
 
-const mockAlert = vi.fn();
-global.alert = mockAlert;
 const mockConsoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
 
 // Mock the confirmation modal to render it immediately, or we can actually click through it since it's just state
@@ -69,7 +67,7 @@ describe('DeleteProductButton', () => {
         });
     });
 
-    it('shows alert when API returns failure', async () => {
+    it('shows toast error when API returns failure', async () => {
         (deleteProductAction as unknown as ReturnType<typeof vi.fn>).mockResolvedValue({
             success: false,
             error: 'Database error'
@@ -85,14 +83,14 @@ describe('DeleteProductButton', () => {
 
         await waitFor(() => {
             expect(deleteProductAction).toHaveBeenCalledWith('prod-2');
-            expect(mockAlert).toHaveBeenCalledWith('Database error');
+            expect(toast.error).toHaveBeenCalledWith('Database error');
             expect(mockConsoleError).toHaveBeenCalled();
             expect(toast.success).not.toHaveBeenCalled();
             expect(mockRefresh).not.toHaveBeenCalled();
         });
     });
 
-    it('shows default alert when API returns failure without specific error', async () => {
+    it('shows default toast error when API returns failure without specific error', async () => {
         (deleteProductAction as unknown as ReturnType<typeof vi.fn>).mockResolvedValue({
             success: false,
         });
@@ -107,11 +105,11 @@ describe('DeleteProductButton', () => {
 
         await waitFor(() => {
             expect(deleteProductAction).toHaveBeenCalledWith('prod-3');
-            expect(mockAlert).toHaveBeenCalledWith('Gagal menghapus produk');
+            expect(toast.error).toHaveBeenCalledWith('Gagal menghapus produk');
         });
     });
 
-    it('shows alert when exception is thrown', async () => {
+    it('shows toast error when exception is thrown', async () => {
         const error = new Error('Network failure');
         (deleteProductAction as unknown as ReturnType<typeof vi.fn>).mockRejectedValue(error);
 
@@ -125,7 +123,7 @@ describe('DeleteProductButton', () => {
 
         await waitFor(() => {
             expect(deleteProductAction).toHaveBeenCalledWith('prod-4');
-            expect(mockAlert).toHaveBeenCalledWith('Network failure');
+            expect(toast.error).toHaveBeenCalledWith('Network failure');
             expect(mockConsoleError).toHaveBeenCalledWith(error);
         });
     });
