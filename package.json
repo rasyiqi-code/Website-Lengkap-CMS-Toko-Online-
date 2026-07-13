@@ -8,7 +8,7 @@
     "dev:webpack": "NODE_OPTIONS='--max-old-space-size=4096' next dev",
     "clean": "rm -rf .next",
     "kill": "killall node || true",
-    "build": "prisma generate && cpus=2 next build",
+    "build": "prisma generate && NODE_OPTIONS='--max-old-space-size=1536' next build",
     "start": "NODE_OPTIONS='--optimize-for-size --gc-interval=100' node .next/standalone/server.js",
     "start:standalone": "NODE_OPTIONS='--optimize-for-size --gc-interval=100' node .next/standalone/server.js",
     "lint": "eslint .",
