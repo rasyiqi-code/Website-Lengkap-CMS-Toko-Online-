@@ -196,9 +196,7 @@ export async function importBackupData(backupData: BackupData, currentAdminId?: 
 
         // 8. SiteSettings
         if (d.siteSettings && d.siteSettings.length > 0) {
-            for (const ss of d.siteSettings) {
-                await db.siteSettings.create({ data: ss });
-            }
+            await db.siteSettings.createMany({ data: d.siteSettings });
         }
 
         // 9. SiteStatistics
