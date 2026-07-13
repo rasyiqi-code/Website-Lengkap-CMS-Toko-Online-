@@ -129,7 +129,7 @@ export default function BillingClient({ plans, currentPlan, paymentMethods = [],
     };
 
     const executeUpgrade = async (method: "manual" | "midtrans") => {
-        if (!previewPlan || (previewPlan.id === currentPlan?.id && !isTrial)) return;
+        if (!previewPlan || (previewPlan.id === currentPlan?.id && !isTrial && !isCurrentPlanExpired)) return;
         setIsLoading(true);
         try {
             const res = await upgradePlanAction({ 
