@@ -206,7 +206,7 @@ export default function CouponList({ initialCoupons, affiliates }: CouponListPro
                         <option value="all">Semua Status</option>
                         <option value="active">Aktif</option>
                         <option value="inactive">Non-Aktif</option>
-                        <option value="expired">Expired</option>
+                        <option value="expired">Kedaluwarsa</option>
                         <option value="exhausted">Kuota Habis</option>
                     </select>
                     <button
@@ -292,7 +292,7 @@ export default function CouponList({ initialCoupons, affiliates }: CouponListPro
                                     ) : isExpired ? (
                                         <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-500 border border-amber-500/20">
                                             <X size={10} />
-                                            <span className="text-[9px] font-black uppercase">Expired</span>
+                                            <span className="text-[9px] font-black uppercase">Kedaluwarsa</span>
                                         </div>
                                     ) : isUsageExceeded ? (
                                         <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-500 border border-amber-500/20">

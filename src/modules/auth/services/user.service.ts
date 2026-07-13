@@ -2,6 +2,7 @@ import * as userRepo from "../repositories/user.repository";
 import * as tenantUserRepo from "../repositories/tenant-user.repository";
 import { UserDTO } from "../index";
 import bcrypt from "bcryptjs";
+import crypto from "crypto";
 
 /**
  * Mendapatkan data user berdasarkan ID.
@@ -148,7 +149,7 @@ export async function createUserByAdmin(siteId: string | undefined, data: any, s
             await tenantUserRepo.upsertSiteUser(siteId, user.id, role || "user");
         }
     } else {
-        const rawPassword = password && password.trim() !== "" ? password : "change-me";
+        const rawPassword = password && password.trim() !== "" ? password : crypto.randomBytes(32).toString("hex");
         const hashedPassword = await bcrypt.hash(rawPassword, 10);
         user = await userRepo.createUser({
             name,

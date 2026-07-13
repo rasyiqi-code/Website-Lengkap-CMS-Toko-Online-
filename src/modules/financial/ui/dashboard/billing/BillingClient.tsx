@@ -319,14 +319,21 @@ export default function BillingClient({ plans, currentPlan, paymentMethods = [],
                 </div>
             </div>
 
-            {/* Trial Banner */}
-            {isTrial && trialDays !== null && (
+            {/* Trial / Expiry Banner */}
+            {isTrial && trialDays !== null ? (
                 <TrialBanner 
                     trialDays={trialDays} 
                     isLoading={isLoading} 
                     onExtendTrial={handleExtendTrial} 
                     canExtend={!currentPlan.trialExtended} 
                 />
+            ) : (
+                daysLeft !== null && (daysLeft <= 0 || currentPlan?.status === "past_due") ? (
+                    <TrialBanner 
+                        daysLeft={daysLeft} 
+                        isPastDue={currentPlan?.status === "past_due"} 
+                    />
+                ) : null
             )}
 
             {showConfirmModal ? (
@@ -373,6 +380,7 @@ export default function BillingClient({ plans, currentPlan, paymentMethods = [],
                                 onUpgrade={() => setPaymentSelection({ type: "upgrade" })}
                                 daysLeft={daysLeft}
                                 isTrial={!!isTrial}
+                                trialDays={trialDays}
                                 couponCode={couponCode}
                                 setCouponCode={setCouponCode}
                                 appliedCoupon={appliedCoupon}

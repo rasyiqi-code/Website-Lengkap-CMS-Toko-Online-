@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { ConfirmActionButton } from "@/components/ui/ConfirmActionButton";

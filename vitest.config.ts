@@ -1,4 +1,4 @@
-import { defineConfig, defaultExclude } from 'vitest/config';
+import { defineConfig } from 'vitest/config';
 import path from 'path';
 
 const aliases = {
@@ -24,7 +24,18 @@ export default defineConfig({
     jsxInject: `import React from 'react'`,
   },
   test: {
-    exclude: [...defaultExclude, 'tests/e2e/**'],
+    environment: 'node',
+    setupFiles: ['dotenv/config'],
+    include: ['tests/unit/**/*.test.{ts,tsx}'],
+    exclude: [
+      '**/node_modules/**',
+      '**/dist/**',
+      '**/cypress/**',
+      '**/.{idea,git,cache,output,temp}/**',
+      '**/.next/**',
+      'tests/e2e/**',
+      '**/*.spec.ts'
+    ],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'html', 'json'],

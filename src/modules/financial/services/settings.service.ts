@@ -16,11 +16,42 @@ export async function getSiteSettingsBillingContext(siteId: string) {
     const activePlanName = plan?.name || allPlans.find((p: any) => Number(p.price) === 0)?.name || "Free";
     const activePlanPrice = plan?.price ? Number(plan.price) : 0;
 
+    // Hitung status masa aktif
+    const now = new Date();
+    let isExpired = false;
+    let isGracePeriod = false;
+
+    if (subscription) {
+        if (subscription.trialEndsAt) {
+            const trialEnd = new Date(subscription.trialEndsAt);
+            if (now > trialEnd) {
+                const graceEnd = new Date(trialEnd);
+                graceEnd.setDate(graceEnd.getDate() + 30);
+                if (now <= graceEnd) isGracePeriod = true;
+                else isExpired = true;
+            }
+        } else if (subscription.endDate) {
+            const end = new Date(subscription.endDate);
+            if (now > end) {
+                const graceEnd = new Date(end);
+                graceEnd.setDate(graceEnd.getDate() + 30);
+                if (now <= graceEnd) isGracePeriod = true;
+                else isExpired = true;
+            }
+        } else if (subscription.status === "cancelled" || subscription.status === "expired") {
+            isExpired = true;
+        } else if (subscription.status === "past_due") {
+            isGracePeriod = true;
+        }
+    }
+
     return {
         activePlanName,
         activePlanPrice,
         isTrial: subscription?.trialEndsAt ? new Date(subscription.trialEndsAt) > new Date() : false,
         trialEndsAt: subscription?.trialEndsAt ?? null,
+        isExpired,
+        isGracePeriod,
         maxSites: plan?.maxSites || 1,
         planFeatures: {
             ...(plan?.features as any || {}),

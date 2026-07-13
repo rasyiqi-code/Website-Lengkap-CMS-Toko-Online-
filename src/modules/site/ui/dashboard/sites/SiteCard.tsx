@@ -25,6 +25,57 @@ export function SiteCard({ site, rootDomain, onOpenSettings }: SiteCardProps) {
     const dashboardUrl = `/api/auth/bridge?target=${encodeURIComponent(targetDashboardUrl)}`;
     const editorUrl = `/api/auth/bridge?target=${encodeURIComponent(targetEditorUrl)}`;
 
+    const statusInfo = (() => {
+        if (!sub) return { label: "Tanpa Paket", class: "text-muted-foreground bg-muted/10 border-muted/20" };
+        
+        const now = new Date();
+        
+        // Permanent plan (e.g. Free)
+        if (sub.status === "active" && !sub.trialEndsAt && !sub.endDate) {
+            return { label: "Aktif", class: "text-emerald-500 bg-emerald-500/10 border-emerald-500/20" };
+        }
+        
+        if (sub.trialEndsAt) {
+            const trialEnd = new Date(sub.trialEndsAt);
+            if (now <= trialEnd) {
+                return { label: "Trial Aktif", class: "text-sky-500 bg-sky-500/10 border-sky-500/20" };
+            } else {
+                const graceEnd = new Date(trialEnd);
+                graceEnd.setDate(graceEnd.getDate() + 30);
+                if (now <= graceEnd) {
+                    return { label: "Masa Tenggang", class: "text-amber-500 bg-amber-500/10 border-amber-500/20" };
+                } else {
+                    return { label: "Kedaluwarsa", class: "text-red-500 bg-red-500/10 border-red-500/20" };
+                }
+            }
+        }
+        
+        if (sub.endDate) {
+            const end = new Date(sub.endDate);
+            if (now <= end) {
+                return { label: "Aktif", class: "text-emerald-500 bg-emerald-500/10 border-emerald-500/20" };
+            } else {
+                const graceEnd = new Date(end);
+                graceEnd.setDate(graceEnd.getDate() + 30);
+                if (now <= graceEnd) {
+                    return { label: "Masa Tenggang", class: "text-amber-500 bg-amber-500/10 border-amber-500/20" };
+                } else {
+                    return { label: "Kedaluwarsa", class: "text-red-500 bg-red-500/10 border-red-500/20" };
+                }
+            }
+        }
+        
+        if (sub.status === "cancelled" || sub.status === "expired") {
+            return { label: "Kedaluwarsa", class: "text-red-500 bg-red-500/10 border-red-500/20" };
+        }
+        
+        if (sub.status === "past_due") {
+            return { label: "Masa Tenggang", class: "text-amber-500 bg-amber-500/10 border-amber-500/20" };
+        }
+        
+        return { label: "Aktif", class: "text-emerald-500 bg-emerald-500/10 border-emerald-500/20" };
+    })();
+
     return (
         <div className="group bg-card border border-border rounded-md overflow-hidden shadow-sm hover:border-primary/40 transition-all duration-500 hover:shadow-2xl hover:shadow-primary/5 flex flex-col">
             {/* Preview Area / Header */}
@@ -41,9 +92,9 @@ export function SiteCard({ site, rootDomain, onOpenSettings }: SiteCardProps) {
             <div className="p-4 space-y-3 flex-grow">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                        <span className="text-[8px] font-black text-primary uppercase bg-primary/10 border border-primary/20 px-2 py-1 rounded tracking-widest">
+                        <span className={`text-[8px] font-black uppercase px-2 py-1 rounded tracking-widest border ${statusInfo.class}`}>
                             {site.subscriptions[0]?.trialEndsAt && new Date(site.subscriptions[0].trialEndsAt) > new Date() 
-                                ? "Trial Period" 
+                                ? `Trial · ${planName}`
                                 : planName}
                         </span>
                         {site.customDomain && (
@@ -56,8 +107,8 @@ export function SiteCard({ site, rootDomain, onOpenSettings }: SiteCardProps) {
                             </span>
                         )}
                     </div>
-                    <span className="text-[8px] text-muted-foreground uppercase font-black tracking-[0.2em] opacity-40">
-                        Status Aktif
+                    <span className={`text-[8px] uppercase font-black tracking-[0.2em] px-2 py-0.5 rounded border ${statusInfo.class}`}>
+                        {statusInfo.label}
                     </span>
                 </div>
 

@@ -25,6 +25,9 @@ export async function checkAndUpdateExpiredSubscriptions(): Promise<ExpirationRe
         include: { plan: true },
     });
 
+    const expiredIds: string[] = [];
+    const pastDueIds: string[] = [];
+
     for (const sub of activeSubs) {
         const siteId = sub.siteId;
 
@@ -45,20 +48,13 @@ export async function checkAndUpdateExpiredSubscriptions(): Promise<ExpirationRe
 
         // Jika sudah lewat grace period → set status ke "expired"
         if (now >= effectiveEndDate) {
-            await db.subscription.update({
-                where: { id: sub.id },
-                data: { status: "expired" },
-            });
-            result.updatedToExpired++;
+            expiredIds.push(sub.id);
             continue;
         }
 
         // Jika paid subscription sudah lewat endDate (masih dalam grace period) → set ke "past_due"
         if (sub.endDate && !sub.trialEndsAt && now >= sub.endDate) {
-            await db.subscription.update({
-                where: { id: sub.id },
-                data: { status: "past_due" },
-            });
+            pastDueIds.push(sub.id);
         }
 
         // Jika trial sudah berakhir (tapi masih dalam grace period), kirim notifikasi
@@ -92,6 +88,21 @@ export async function checkAndUpdateExpiredSubscriptions(): Promise<ExpirationRe
                 result.remindersSent++;
             }
         }
+    }
+
+    if (expiredIds.length > 0) {
+        const res = await db.subscription.updateMany({
+            where: { id: { in: expiredIds } },
+            data: { status: "expired" },
+        });
+        result.updatedToExpired += res.count;
+    }
+
+    if (pastDueIds.length > 0) {
+        await db.subscription.updateMany({
+            where: { id: { in: pastDueIds } },
+            data: { status: "past_due" },
+        });
     }
 
     return result;

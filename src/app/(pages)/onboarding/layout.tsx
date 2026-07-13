@@ -19,7 +19,10 @@ export default async function OnboardingLayout({
     const siteIds = userSites.map(s => s.siteId);
 
     const activeSubscriptions = await db.subscription.findMany({
-        where: { siteId: { in: siteIds }, status: "active" },
+        where: { 
+            siteId: { in: siteIds }, 
+            status: { in: ["active", "past_due"] } 
+        },
         select: {
             addonSlots: true,
             plan: {
@@ -30,9 +33,19 @@ export default async function OnboardingLayout({
         }
     });
     
-    const maxSitesAllowed = activeSubscriptions.length > 0 
-        ? Math.max(...activeSubscriptions.map(s => (s.plan?.maxSites || 1) + (s.addonSlots || 0)))
-        : 1;
+    const maxSitesAllowed = (() => {
+        if (activeSubscriptions.length === 0) return 1;
+        let max = 1;
+        for (const s of activeSubscriptions) {
+            const planLimit = s.plan?.maxSites ?? 1;
+            if (planLimit === -1) return -1;
+            const total = planLimit + (s.addonSlots || 0);
+            if (total > max) {
+                max = total;
+            }
+        }
+        return max;
+    })();
 
     // If limit reached, redirect to billing (unless they have 0 sites, then they MUST onboarding)
     if (sitesCount > 0 && maxSitesAllowed !== -1 && sitesCount >= maxSitesAllowed) {

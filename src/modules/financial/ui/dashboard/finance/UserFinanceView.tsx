@@ -16,7 +16,60 @@ import {
 import { TableContainer, THead, TBody, TR, TH, TD } from "@/components/ui/Table";
 import { requestAffiliateWithdrawalAction } from "@/modules/auth/public-actions";
 
-export default function UserFinanceView({ user }: { user: any }) {
+export interface UserCommission {
+    id: string;
+    userId: string;
+    amount: string | number;
+    transactionId: string | null;
+    description: string | null;
+    createdAt: string;
+}
+
+export interface UserSale {
+    id: string;
+    amount: number;
+    description: string;
+    createdAt: string;
+    siteName: string;
+}
+
+export interface UserWithdrawal {
+    id: string;
+    userId: string;
+    amount: string | number;
+    status: "pending" | "approved" | "rejected";
+    bankName: string;
+    accountNumber: string;
+    accountName: string;
+    notes: string | null;
+    createdAt: string;
+    updatedAt: string;
+}
+
+export interface UserWithFinance {
+    id: string;
+    affiliateBalance: string | number;
+    commissions?: UserCommission[];
+    sales?: UserSale[];
+    withdrawals?: UserWithdrawal[];
+}
+
+type TransactionType = "commission" | "sale" | "withdrawal";
+
+interface TransactionItem {
+    id: string;
+    type: TransactionType;
+    amount: string | number;
+    createdAt: string;
+    sortDate: Date;
+    description?: string | null;
+    status?: "pending" | "approved" | "rejected";
+    bankName?: string;
+    accountNumber?: string;
+    accountName?: string;
+}
+
+export default function UserFinanceView({ user }: { user: UserWithFinance }) {
     const [activeTab, setActiveTab] = useState<"all" | "balance" | "withdrawals">("all");
     const [isWithdrawing, setIsWithdrawing] = useState(false);
     const [withdrawForm, setWithdrawForm] = useState({ bankName: "", accountNumber: "", accountName: "", amount: "" });
@@ -26,11 +79,11 @@ export default function UserFinanceView({ user }: { user: any }) {
     const balance = Number(user.affiliateBalance || 0);
 
     // Calculate statistical metrics
-    const totalCommissions = user.commissions?.reduce((acc: number, curr: any) => acc + Number(curr.amount), 0) || 0;
-    const totalWithdrawn = user.withdrawals?.filter((w: any) => w.status === "approved")
-        .reduce((acc: number, curr: any) => acc + Number(curr.amount), 0) || 0;
-    const pendingWithdrawals = user.withdrawals?.filter((w: any) => w.status === "pending")
-        .reduce((acc: number, curr: any) => acc + Number(curr.amount), 0) || 0;
+    const totalCommissions = user.commissions?.reduce((acc: number, curr: UserCommission) => acc + Number(curr.amount), 0) || 0;
+    const totalWithdrawn = user.withdrawals?.filter((w: UserWithdrawal) => w.status === "approved")
+        .reduce((acc: number, curr: UserWithdrawal) => acc + Number(curr.amount), 0) || 0;
+    const pendingWithdrawals = user.withdrawals?.filter((w: UserWithdrawal) => w.status === "pending")
+        .reduce((acc: number, curr: UserWithdrawal) => acc + Number(curr.amount), 0) || 0;
 
     const handleWithdraw = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -186,26 +239,26 @@ export default function UserFinanceView({ user }: { user: any }) {
                     <TBody>
                         {/* Get and merge data based on tabs */}
                         {(() => {
-                            let items: any[] = [];
+                            let items: TransactionItem[] = [];
                             
                             if (activeTab === "all" || activeTab === "balance") {
-                                const commissionsMapped = (user.commissions || []).map((com: any) => ({
+                                const commissionsMapped = (user.commissions || []).map((com: UserCommission) => ({
                                     ...com,
-                                    type: "commission",
+                                    type: "commission" as TransactionType,
                                     sortDate: new Date(com.createdAt)
                                 }));
-                                const salesMapped = (user.sales || []).map((sale: any) => ({
+                                const salesMapped = (user.sales || []).map((sale: UserSale) => ({
                                     ...sale,
-                                    type: "sale",
+                                    type: "sale" as TransactionType,
                                     sortDate: new Date(sale.createdAt)
                                 }));
                                 items = [...items, ...commissionsMapped, ...salesMapped];
                             }
 
                             if (activeTab === "all" || activeTab === "withdrawals") {
-                                const withdrawalsMapped = (user.withdrawals || []).map((w: any) => ({
+                                const withdrawalsMapped = (user.withdrawals || []).map((w: UserWithdrawal) => ({
                                     ...w,
-                                    type: "withdrawal",
+                                    type: "withdrawal" as TransactionType,
                                     sortDate: new Date(w.createdAt)
                                 }));
                                 items = [...items, ...withdrawalsMapped];
@@ -224,7 +277,7 @@ export default function UserFinanceView({ user }: { user: any }) {
                                 );
                             }
 
-                            return items.map((item: any, idx: number) => {
+                            return items.map((item: TransactionItem, idx: number) => {
                                 const isIncome = item.type === "commission" || item.type === "sale";
                                 const isCommission = item.type === "commission";
                                 

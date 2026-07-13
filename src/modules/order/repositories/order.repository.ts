@@ -159,8 +159,20 @@ export async function restoreOrderStock(orderId: string) {
 
     if (!order) return;
 
+    // ⚡ Bolt Optimization: Batch fetch products to avoid N+1 query problem.
+    // Gathers unique product IDs and fetches them in a single query,
+    // mapping them for O(1) lookups instead of executing a query per order item.
+    const productIds = Array.from(new Set(order.items.map(item => item.productId)));
+    if (productIds.length === 0) return;
+
+    const products = await db.product.findMany({
+        where: { id: { in: productIds } }
+    });
+
+    const productMap = new Map(products.map(p => [p.id, p]));
+
     for (const item of order.items) {
-        const product = await db.product.findUnique({ where: { id: item.productId } });
+        const product = productMap.get(item.productId);
         if (!product) continue;
 
         if (item.variantName && product.variants) {

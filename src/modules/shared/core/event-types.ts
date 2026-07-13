@@ -82,4 +82,10 @@ export interface EventMap {
   'request.content.getMediaSize': { siteId: string };
   'request.billing.getActiveSubscription': { siteId: string };
   'request.billing.checkLimit': { siteId: string; limitType: string };
+  'request.infra.provisionSite': { userId: string; siteName: string; subdomain: string };
+  'request.infra.exportBackup': {};
+  'request.infra.importBackup': { backupData: any; currentAdminId?: string };
+  'request.infra.manageSite': { siteId: string; action: "set_free" | "extend_trial" };
+  'request.infra.assignSiteOwner': { siteId: string; email: string };
+  'request.infra.updateSiteSubdomain': { siteId: string; subdomain: string };
 }
