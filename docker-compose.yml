@@ -2,9 +2,7 @@ name: situsbisnis
 
 services:
   nextjs-app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: ghcr.io/crediblemark-official/situsbisnis:latest
     container_name: situsbisnis-v2
     restart: unless-stopped
     environment:
