@@ -96,26 +96,31 @@ export async function checkUserSitesLimit(siteIds: string[], currentSiteCount: n
     planName?: string;
     maxSitesAllowed?: number;
 }> {
-    const subscription = await subscriptionRepo.findActiveSubscriptionBySiteIds(siteIds);
+    const subscriptions = await subscriptionRepo.findActiveSubscriptionsBySiteIds(siteIds);
+    const now = new Date();
 
-    // Verifikasi subscription tidak dalam status efektif expired/grace
-    if (subscription) {
-        const now = new Date();
-        const isTrialExpired = subscription.trialEndsAt && now > subscription.trialEndsAt;
-        const isEndDatePassed = subscription.endDate && now > subscription.endDate;
-        if (isTrialExpired || isEndDatePassed) {
-            return {
-                allowed: false,
-                planName: subscription.plan?.name || "Free",
-                message: "Langganan Anda telah berakhir. Silakan perbarui langganan untuk membuat situs baru."
-            };
+    // Hanya hitung langganan yang belum kedaluwarsa masa trial atau tanggal berbayarnya
+    const activeSubs = subscriptions.filter(sub => {
+        if (sub.trialEndsAt && now > new Date(sub.trialEndsAt)) return false;
+        if (sub.endDate && now > new Date(sub.endDate)) return false;
+        return true;
+    });
+
+    const maxSitesAllowed = (() => {
+        if (activeSubs.length === 0) return 1;
+        let max = 1;
+        for (const sub of activeSubs) {
+            const planLimit = sub.plan?.maxSites ?? 1;
+            if (planLimit === -1) return -1;
+            const total = planLimit + (sub.addonSlots || 0);
+            if (total > max) {
+                max = total;
+            }
         }
-    }
+        return max;
+    })();
 
-    const planLimit = subscription?.plan?.maxSites ?? 1;
-    const addonSlots = (subscription as any)?.addonSlots ?? 0;
-    const maxSitesAllowed = planLimit === -1 ? -1 : planLimit + addonSlots;
-    const planName = subscription?.plan?.name || "Free";
+    const planName = activeSubs.length > 0 ? activeSubs[0].plan?.name : "Free";
 
     if (maxSitesAllowed !== -1 && currentSiteCount >= maxSitesAllowed) {
         return {

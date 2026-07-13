@@ -88,8 +88,9 @@ export default async function DashboardLayout({
     const siteStatus = await getSiteAccessStatus();
 
     // Block full dashboard access if EXPIRED (past grace period)
-    // But allow /dashboard/billing to stay accessible
-    if (siteStatus === "expired" && pathname !== "/dashboard/billing") {
+    // But allow billing, history-bill, and subscriptions to stay accessible
+    const allowedBillingPaths = ["/dashboard/billing", "/dashboard/history-bill", "/dashboard/subscriptions"];
+    if (siteStatus === "expired" && !allowedBillingPaths.includes(pathname)) {
         redirect("/dashboard/billing");
     }
 

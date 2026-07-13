@@ -62,11 +62,20 @@ export function TransactionHistory({
                                         <span className="text-[10px] font-black text-foreground uppercase tracking-tight">Rp {tx.amount.toLocaleString()}</span>
                                     </td>
                                     <td className="px-5 py-3.5">
-                                        <span className={`px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest border ${tx.status === 'approved' ? 'bg-green-500/10 text-green-500 border-green-500/20' :
-                                            tx.status === 'pending' ? 'bg-amber-500/10 text-amber-500 border-amber-500/20' :
-                                                'bg-rose-500/10 text-rose-500 border-rose-500/20'
+                                        <span className={`px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest border ${
+                                            tx.status === 'approved' || tx.status === 'paid'
+                                                ? 'bg-green-500/10 text-green-500 border-green-500/20' 
+                                                : tx.status === 'pending' 
+                                                ? 'bg-amber-500/10 text-amber-500 border-amber-500/20' 
+                                                : 'bg-rose-500/10 text-rose-500 border-rose-500/20'
                                             }`}>
-                                            {tx.status === 'approved' ? 'Berhasil' : tx.status === 'pending' ? 'Menunggu' : 'Dibatalkan'}
+                                            {tx.status === 'approved' || tx.status === 'paid'
+                                                ? 'Berhasil' 
+                                                : tx.status === 'pending' 
+                                                ? 'Menunggu Konfirmasi' 
+                                                : tx.status === 'cancelled' 
+                                                ? 'Dibatalkan'
+                                                : 'Kedaluwarsa'}
                                         </span>
                                     </td>
                                     <td className="px-5 py-3.5 text-right">

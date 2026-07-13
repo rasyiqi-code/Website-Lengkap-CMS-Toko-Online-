@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useSyncExternalStore } from "react";
 import { Facebook, Twitter, Link2, Share2 } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -8,13 +8,12 @@ interface ShareButtonsProps {
     title: string;
 }
 
-export default function ShareButtons({ title }: ShareButtonsProps) {
-    const [shareUrl, setShareUrl] = useState("");
+const subscribe = () => () => {};
+const getSnapshot = () => window.location.href;
+const getServerSnapshot = () => "";
 
-    useEffect(() => {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        setShareUrl(window.location.href);
-    }, []);
+export default function ShareButtons({ title }: ShareButtonsProps) {
+    const shareUrl = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
     const handleCopy = async () => {
         try {

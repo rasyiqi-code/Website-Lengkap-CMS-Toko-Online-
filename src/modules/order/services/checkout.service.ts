@@ -119,6 +119,8 @@ export async function createOrder(
 
     // Jalankan stock reduction
     try {
+        const stockUpdatePromises: Promise<any>[] = [];
+
         for (const update of stockUpdates) {
             const product = productMap.get(update.productId);
             if (!product) continue;
@@ -136,12 +138,14 @@ export async function createOrder(
                     }
                 }
                 if (variantUpdated) {
-                    await orderRepo.updateProductVariants(update.productId, variants);
+                    stockUpdatePromises.push(orderRepo.updateProductVariants(update.productId, variants));
                 }
             } else {
-                 await orderRepo.decrementProductStock(update.productId, update.quantity);
+                stockUpdatePromises.push(orderRepo.decrementProductStock(update.productId, update.quantity));
             }
         }
+
+        await Promise.all(stockUpdatePromises);
     } catch (stockError) {
         console.error("[CreateOrder] Failed to reduce stock", stockError);
     }

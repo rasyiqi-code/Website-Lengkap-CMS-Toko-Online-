@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { ConfirmActionButton } from "@/components/ui/ConfirmActionButton";
@@ -24,7 +25,7 @@ export function DeleteProductButton({ productId, productName }: DeleteProductBut
             toast.success("Produk berhasil dihapus");
             router.refresh();
         } catch (error) {
-            alert((error as Error).message);
+            toast.error((error as Error).message || "Gagal menghapus produk");
             console.error(error);
         }
     };

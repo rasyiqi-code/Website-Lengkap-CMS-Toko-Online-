@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Image from "next/image";
 import { AlertCircle, ChevronDown, Loader2, RefreshCw, Zap } from "lucide-react";
 import { type PaymentMethod } from "../types";
 import { getCategoryIcon } from "../helpers/paymentHelpers";
@@ -115,10 +116,11 @@ export function PaymentMethodSelectionView({
                                                             : "border-gray-200 hover:border-gray-300 bg-white"
                                                     }`}
                                                 >
-                                                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                                                    <img
+                                                    <Image
                                                         src={method.paymentImage}
                                                         alt={method.paymentName}
+                                                        width={40}
+                                                        height={28}
                                                         className="w-10 h-7 object-contain rounded-sm"
                                                         onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
                                                     />

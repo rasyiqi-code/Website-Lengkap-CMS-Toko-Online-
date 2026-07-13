@@ -7,7 +7,7 @@ import { formatPrice } from "@/lib/billing/currency";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { StatCard, LibraryItem } from "@/components/ui/Stats";
-import { getSiteId } from "@/lib/domains/tenant";
+import { getSiteId, getSiteAccessStatus } from "@/lib/domains/tenant";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { PostClient } from "@/modules/post";
@@ -100,6 +100,8 @@ export default async function DashboardPage() {
     const paymentSettings = await getPaymentSettings(siteId || undefined);
     const currency = paymentSettings.currency || "USD";
     const totalRevenue = data.recentOrders.reduce((acc, o) => acc + Number(o.total), 0);
+
+    const siteStatus = siteId ? await getSiteAccessStatus() : "active";
 
     const trialDaysLeft = subscription?.trialEndsAt 
         ? Math.max(0, Math.ceil((new Date(subscription.trialEndsAt).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)))
@@ -214,13 +216,17 @@ export default async function DashboardPage() {
                                     Status Akun &amp; Limit
                                 </span>
                                 <span className="flex h-2 w-2 relative">
-                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                                    <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${
+                                        siteStatus === "grace_period" ? "bg-amber-400" : siteStatus === "expired" ? "bg-red-400" : "bg-green-400"
+                                    }`}></span>
+                                    <span className={`relative inline-flex rounded-full h-2 w-2 ${
+                                        siteStatus === "grace_period" ? "bg-amber-500" : siteStatus === "expired" ? "bg-red-500" : "bg-green-500"
+                                    }`}></span>
                                 </span>
                             </div>
 
                             {/* Plan Content */}
-                            {trialDaysLeft !== null ? (
+                            {trialDaysLeft !== null && siteStatus === "active" ? (
                                 <div className="space-y-3">
                                     <div>
                                         <div className="flex items-baseline gap-1">
@@ -264,7 +270,12 @@ export default async function DashboardPage() {
                                         )}
                                     </h3>
                                     <p className="text-xs text-muted-foreground leading-relaxed font-medium">
-                                        Akun Anda dalam kondisi aktif. Nikmati fitur premium pembuatan web otomatis tanpa batas!
+                                        {siteStatus === "grace_period" 
+                                            ? "Masa berlaku uji coba Anda telah berakhir. Harap selesaikan pembayaran paket langganan Anda."
+                                            : siteStatus === "expired"
+                                            ? "Langganan Anda telah kedaluwarsa. Situs ini dinonaktifkan hingga pembayaran dilakukan."
+                                            : "Akun Anda dalam kondisi aktif. Nikmati fitur premium pembuatan web otomatis tanpa batas!"
+                                        }
                                     </p>
                                 </div>
                             )}

@@ -209,10 +209,10 @@ export default function SiteList({ initialSites }: { initialSites: any[] }) {
                                 const graceEnd = new Date(trialEnd);
                                 graceEnd.setDate(graceEnd.getDate() + 30);
                                 if (now <= graceEnd) {
-                                    statusLabel = "Grace Period";
+                                    statusLabel = "Masa Tenggang";
                                     statusColor = "bg-amber-500/10 text-amber-500";
                                 } else {
-                                    statusLabel = "Expired";
+                                    statusLabel = "Kedaluwarsa";
                                     statusColor = "bg-red-500/10 text-red-500";
                                 }
                             }
