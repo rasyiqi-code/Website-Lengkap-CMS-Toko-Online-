@@ -75,10 +75,10 @@
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "@types/testing-library__jest-dom": "5.14.9",
-    "@vitejs/plugin-react": "^4.0.0",
+    "@vitejs/plugin-react": "^6.0.3",
     "@vitest/coverage-v8": "^4.1.9",
     "dependency-cruiser": "^17.4.3",
-    "eslint": "9.21.0",
+    "eslint": "9.39.5",
     "eslint-config-next": "^16.2.9",
     "happy-dom": "^20.10.6",
     "husky": "^9.1.7",
@@ -90,7 +90,7 @@
     "prisma": "^5.22.0",
     "tailwindcss": "^4.3.1",
     "typescript": "^5.9.3",
-    "vite": "^5.0.0",
+    "vite": "^8.1.4",
     "vitest": "^4.1.9"
   },
   "prisma": {
