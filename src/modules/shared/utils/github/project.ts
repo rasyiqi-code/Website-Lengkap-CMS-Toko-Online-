@@ -66,25 +66,27 @@ export async function fetchRoadmapData(): Promise<RoadmapItem[] | null> {
 
         const nodes = json.data?.organization?.projectV2?.items?.nodes || [];
         
-        const items: RoadmapItem[] = nodes.map((node: any) => {
-            let status = "Todo";
-            // Find the Status field value
-            const fieldValues = node.fieldValues?.nodes || [];
-            for (const fv of fieldValues) {
-                if (fv.field?.name === "Status" && fv.name) {
-                    status = fv.name;
-                    break;
+        const items: RoadmapItem[] = nodes
+            .filter((node: any) => node.content?.title) // Buang item tanpa judul (PR merged tanpa DraftIssue/Issue)
+            .map((node: any) => {
+                let status = "Todo";
+                // Cari nilai field Status
+                const fieldValues = node.fieldValues?.nodes || [];
+                for (const fv of fieldValues) {
+                    if (fv.field?.name === "Status" && fv.name) {
+                        status = fv.name;
+                        break;
+                    }
                 }
-            }
 
-            return {
-                title: node.content?.title || "Untitled",
-                body: node.content?.body || "",
-                status
-            };
-        });
+                return {
+                    title: node.content.title,
+                    body: node.content.body || "",
+                    status
+                };
+            });
 
-        return items;
+        return items.length > 0 ? items : null;
     } catch (error) {
         console.error("[GITHUB] Error fetching project data:", error);
         return null;

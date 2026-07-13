@@ -24,6 +24,9 @@ services:
       NEXT_PUBLIC_ROOT_DOMAIN: ${NEXT_PUBLIC_ROOT_DOMAIN}
       NEXT_PUBLIC_SERVER_IP: ${NEXT_PUBLIC_SERVER_IP}
       NODE_ENV: production
+
+      # GitHub PAT untuk fetch roadmap dari GitHub Projects
+      GITHUB_PAT: ${GITHUB_PAT}
     networks:
       - dokploy-network
     labels:
