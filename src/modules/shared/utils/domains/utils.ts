@@ -1,5 +1,13 @@
 
 
+declare const process: {
+  env: {
+    NODE_ENV: string;
+    NEXT_PUBLIC_ROOT_DOMAIN?: string;
+    [key: string]: string | undefined;
+  };
+};
+
 /**
  * Dynamically detects the root domain of the application.
  * Returns the domain including port if it's localhost.
