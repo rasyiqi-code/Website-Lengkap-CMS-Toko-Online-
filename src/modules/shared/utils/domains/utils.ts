@@ -1,5 +1,4 @@
 
-
 declare const process: {
   env: {
     NODE_ENV: string;
@@ -27,7 +26,7 @@ export function getRootDomain(host?: string | null) {
     const envDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN.replace(/^https?:\/\//, '');
     const isEnvLocalhost = envDomain.includes("localhost") || envDomain.includes("127.0.0.1");
     const isActualLocalhost = currentHost ? (currentHost.includes("localhost") || currentHost.includes("127.0.0.1")) : false;
-    
+
     if (!(isEnvLocalhost && currentHost && !isActualLocalhost)) {
       return envDomain;
     }
@@ -65,15 +64,15 @@ export function isApexDomain(domain: string): boolean {
   const hostname = domain.split(":")[0].toLowerCase();
   const parts = hostname.split(".");
   if (parts.length <= 2) return true;
-  
+
   const last = parts[parts.length - 1];
   const secondLast = parts[parts.length - 2];
-  
+
   if (parts.length === 3) {
     const isMultiPartTld = (last.length <= 3 && secondLast.length <= 3);
     return isMultiPartTld;
   }
-  
+
   return false;
 }
 
@@ -84,12 +83,12 @@ export function getProtocol(host?: string | null) {
   if (typeof window !== "undefined") {
     return window.location.protocol.replace(":", "");
   }
-  
+
   // If on localhost, use http
   if (host?.includes("localhost") || process.env.NODE_ENV === "development") {
     return "http";
   }
-  
+
   return "https";
 }
 
@@ -98,7 +97,7 @@ export function getProtocol(host?: string | null) {
  */
 export function getBaseUrl(host?: string | null) {
   if (typeof window !== "undefined") return window.location.origin;
-  
+
   if (host) {
     return `${getProtocol(host)}://${host}`;
   }

@@ -2,7 +2,7 @@
 
 import React from "react";
 
-export function TableContainer({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+export function TableContainer({ children, className = "" }: { children?: React.ReactNode; className?: string }) {
     return (
         <div className={`bg-card md:rounded-md border-y md:border border-border/50 overflow-hidden shadow-xl relative -mx-3 md:mx-0 w-[calc(100%+1.5rem)] md:w-full ${className}`}>
             <div className="absolute top-0 left-0 w-full h-[2px] bg-primary/20"></div>
@@ -15,15 +15,15 @@ export function TableContainer({ children, className = "" }: { children: React.R
     );
 }
 
-export function THead({ children }: { children: React.ReactNode }) {
+export function THead({ children }: { children?: React.ReactNode }) {
     return <thead className="bg-muted/20">{children}</thead>;
 }
 
-export function TBody({ children }: { children: React.ReactNode }) {
+export function TBody({ children }: { children?: React.ReactNode }) {
     return <tbody className="divide-y divide-border/50">{children}</tbody>;
 }
 
-export function TR({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+export function TR({ children, className = "" }: { children?: React.ReactNode; className?: string }) {
     return <tr className={`hover:bg-muted/5 transition-all group ${className}`}>{children}</tr>;
 }
 
@@ -32,7 +32,7 @@ export function TH({
     align = "left",
     className = ""
 }: { 
-    children: React.ReactNode; 
+    children?: React.ReactNode; 
     align?: "left" | "center" | "right";
     className?: string;
 }) {
@@ -51,7 +51,7 @@ export function TD({
     colSpan,
     noWrap = true
 }: { 
-    children: React.ReactNode; 
+    children?: React.ReactNode; 
     align?: "left" | "center" | "right";
     className?: string;
     colSpan?: number;
