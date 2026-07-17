@@ -34,7 +34,9 @@ export default function FloatingChat({ settings }: FloatingChatProps) {
     const [isProductPage, setIsProductPage] = useState(false);
 
     useEffect(() => {
-        setIsProductPage(window.location.pathname.includes("/products/"));
+        setTimeout(() => {
+            setIsProductPage(window.location.pathname.includes("/products/"));
+        }, 0);
     }, []);
 
     if (!activeSettings?.showFloatingChat || !targetNumber || isProductPage) return null;

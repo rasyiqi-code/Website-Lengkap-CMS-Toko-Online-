@@ -33,7 +33,7 @@ async function checkConnection() {
         socket.end();
         console.log("✅ Database server is reachable and active!");
         process.exit(0);
-      } catch (e) {
+      } catch (_e) {
         attempts++;
         console.log(`⏳ [Attempt ${attempts}/${maxAttempts}] Database not ready yet, retrying in 2 seconds...`);
         if (attempts >= maxAttempts) {

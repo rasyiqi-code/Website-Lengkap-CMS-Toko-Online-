@@ -27,7 +27,9 @@ export default function StoreSwitcher({ currentSiteId, currentSiteName }: StoreS
     // Simpan host di state agar tidak ada hydration mismatch (SSR vs client)
     const [host, setHost] = useState<string | null>(null);
     useEffect(() => {
-        setHost(window.location.host);
+        setTimeout(() => {
+            setHost(window.location.host);
+        }, 0);
     }, []);
 
     const rootDomain = getRootDomain(host);

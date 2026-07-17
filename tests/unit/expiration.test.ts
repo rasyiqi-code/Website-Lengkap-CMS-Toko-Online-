@@ -1,7 +1,6 @@
 import { test, expect, vi, beforeEach } from "vitest";
 import { checkAndUpdateExpiredSubscriptions } from "@/modules/subscription/services/expiration.service";
 import { db } from "@/modules/shared/core/db";
-import { eventBus } from "@/modules/shared/core/event-bus";
 import { GRACE_PERIOD_DAYS } from "@/lib/billing/constants";
 
 vi.mock("@/modules/shared/core/db", () => ({

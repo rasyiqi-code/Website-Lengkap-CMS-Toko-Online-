@@ -11,7 +11,9 @@ export default function UserAffiliateView({ user }: { user: any }) {
     // Gunakan state agar tidak ada hydration mismatch (SSR vs client)
     const [baseUrl, setBaseUrl] = useState("");
     useEffect(() => {
-        setBaseUrl(window.location.origin);
+        setTimeout(() => {
+            setBaseUrl(window.location.origin);
+        }, 0);
     }, []);
     const referralLink = `${baseUrl}/?ref=${user.referralCode}`;
 

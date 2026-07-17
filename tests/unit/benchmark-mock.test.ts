@@ -1,4 +1,4 @@
-import { test, expect, vi, beforeEach } from "vitest";
+import { test, vi } from "vitest";
 import { checkAndUpdateExpiredSubscriptions } from "@/modules/subscription/services/expiration.service";
 import { db } from "@/modules/shared/core/db";
 import { GRACE_PERIOD_DAYS } from "@/lib/billing/constants";

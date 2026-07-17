@@ -236,32 +236,33 @@ export default function BillingClient({ plans, currentPlan, paymentMethods = [],
     const [isCurrentPlanExpired, setIsCurrentPlanExpired] = useState(false);
 
     useEffect(() => {
-        const now = new Date();
+        setTimeout(() => {
+            const now = new Date();
 
-        // Hitung sisa hari trial
-        if (currentPlan?.trialEndsAt) {
-            const end = new Date(currentPlan.trialEndsAt);
-            setTrialDays(Math.ceil((end.getTime() - now.getTime()) / (1000 * 3600 * 24)));
-        }
+            // Hitung sisa hari trial
+            if (currentPlan?.trialEndsAt) {
+                const end = new Date(currentPlan.trialEndsAt);
+                setTrialDays(Math.ceil((end.getTime() - now.getTime()) / (1000 * 3600 * 24)));
+            }
+            // Hitung sisa hari langganan
+            if (currentPlan?.endDate) {
+                const end = new Date(currentPlan.endDate);
+                setDaysLeft(Math.ceil((end.getTime() - now.getTime()) / (1000 * 3600 * 24)));
+            }
 
-        // Hitung sisa hari langganan
-        if (currentPlan?.endDate) {
-            const end = new Date(currentPlan.endDate);
-            setDaysLeft(Math.ceil((end.getTime() - now.getTime()) / (1000 * 3600 * 24)));
-        }
+            // Status trial
+            setIsTrial(!!(currentPlan && !currentPlan.endDate && currentPlan.trialEndsAt));
 
-        // Status trial
-        setIsTrial(!!(currentPlan && !currentPlan.endDate && currentPlan.trialEndsAt));
-
-        // Status kedaluwarsa
-        const expired = (() => {
-            if (!currentPlan) return false;
-            if (currentPlan.status === "expired" || currentPlan.status === "cancelled") return true;
-            if (currentPlan.trialEndsAt && now > new Date(currentPlan.trialEndsAt)) return true;
-            if (currentPlan.endDate && now > new Date(currentPlan.endDate)) return true;
-            return false;
-        })();
-        setIsCurrentPlanExpired(expired);
+            // Status kedaluwarsa
+            const expired = (() => {
+                if (!currentPlan) return false;
+                if (currentPlan.status === "expired" || currentPlan.status === "cancelled") return true;
+                if (currentPlan.trialEndsAt && now > new Date(currentPlan.trialEndsAt)) return true;
+                if (currentPlan.endDate && now > new Date(currentPlan.endDate)) return true;
+                return false;
+            })();
+            setIsCurrentPlanExpired(expired);
+        }, 0);
     }, [currentPlan]);
 
     const handleExtendTrial = async () => {

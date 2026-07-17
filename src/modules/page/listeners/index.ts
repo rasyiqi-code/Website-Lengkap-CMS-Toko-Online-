@@ -1,4 +1,3 @@
-import { eventBus } from "@/modules/shared/core/event-bus";
 import { hooks } from "@/modules/shared/core/hooks";
 import { getProxiedUrl } from "@/lib/media/utils";
 

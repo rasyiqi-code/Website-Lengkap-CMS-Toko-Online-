@@ -76,11 +76,11 @@ export function CheckoutClient({
     const triggerSnapPopup = useCallback((token: string, redirectUrl: string) => {
         if (typeof window !== "undefined" && (window as any).snap) {
             (window as any).snap.pay(token, {
-                onSuccess: function (result: any) {
+                onSuccess: function (_result: any) {
                     setStatus("paid");
                     router.push("/dashboard/billing?status=success");
                 },
-                onPending: function (result: any) {
+                onPending: function (_result: any) {
                 },
                 onError: function (result: any) {
                     console.error("Snap error:", result);

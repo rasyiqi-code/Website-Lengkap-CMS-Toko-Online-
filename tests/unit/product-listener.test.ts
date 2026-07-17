@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { registerProductCrudCacheListener, initProductListeners } from "@/modules/catalog/listeners/product.listener";
 import { eventBus } from "@/modules/shared/core/event-bus";
 
@@ -28,7 +28,7 @@ describe("Product Listener", () => {
 
     it("should call revalidateTag and revalidatePath correctly on crud event for non-post models", async () => {
       // Capture the callback passed to subscribe
-      let createdCallback: ((payload: any) => Promise<void>) | undefined;
+      let createdCallback: ((_payload: any) => Promise<void>) | undefined;
       vi.mocked(eventBus.subscribe).mockImplementation((channel, callback) => {
         if (channel === "crud.created") {
           createdCallback = callback as any;
@@ -56,7 +56,7 @@ describe("Product Listener", () => {
 
     it("should call revalidateTag and revalidatePath correctly on crud event for post models with slug", async () => {
         // Capture the callback passed to subscribe
-        let updatedCallback: ((payload: any) => Promise<void>) | undefined;
+        let updatedCallback: ((_payload: any) => Promise<void>) | undefined;
         vi.mocked(eventBus.subscribe).mockImplementation((channel, callback) => {
           if (channel === "crud.updated") {
             updatedCallback = callback as any;
@@ -92,7 +92,7 @@ describe("Product Listener", () => {
         });
 
         // Capture the callback passed to subscribe
-        let deletedCallback: ((payload: any) => Promise<void>) | undefined;
+        let deletedCallback: ((_payload: any) => Promise<void>) | undefined;
         vi.mocked(eventBus.subscribe).mockImplementation((channel, callback) => {
           if (channel === "crud.deleted") {
             deletedCallback = callback as any;
