@@ -16,8 +16,10 @@ import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 import Image from "next/image";
 import { TableContainer, THead, TBody, TR, TH, TD } from "@/components/ui/Table";
 import { updateTransactionStatusAction } from "@/modules/payment/public-actions";
+import { getRootDomain } from "@/lib/domains/utils";
 
 export default function TransactionList({ initialTransactions }: { initialTransactions: any[] }) {
+    const rootDomain = getRootDomain();
     const [transactions, setTransactions] = useState(initialTransactions);
     const [search, setSearch] = useState("");
     const [statusFilter, setStatusFilter] = useState("all");
@@ -110,7 +112,7 @@ export default function TransactionList({ initialTransactions }: { initialTransa
                                     <div className="min-w-0">
                                         <p className="text-xs font-bold text-foreground truncate max-w-[150px]">{tx.site?.name}</p>
                                         <p className="text-[9px] text-muted-foreground uppercase font-bold tracking-tight truncate max-w-[150px]">
-                                            {tx.site?.subdomain}.{process.env.NEXT_PUBLIC_ROOT_DOMAIN || "localhost:3000"}
+                                            {tx.site?.subdomain}.{rootDomain}
                                         </p>
                                     </div>
                                 </div>

@@ -9,6 +9,7 @@ import { TableContainer, THead, TBody, TR, TH } from "@/components/ui/Table";
 import { SubscriptionTableRow } from "@/components/dashboard/subscriptions/SubscriptionTableRow";
 import { SubscriptionDetailModal } from "@/components/dashboard/subscriptions/SubscriptionDetailModal";
 import { manageSubscriptionAction } from "@/modules/subscription/public-actions";
+import { getRootDomain } from "@/lib/domains/utils";
 
 export default function SubscriptionList({ initialSubscriptions }: { initialSubscriptions: any[] }) {
     const [subs, _setSubs] = useState(initialSubscriptions);
@@ -29,7 +30,7 @@ export default function SubscriptionList({ initialSubscriptions }: { initialSubs
     const [isSendingFollowup, setIsSendingFollowup] = useState(false);
     const [isSendingEmailFollowup, setIsSendingEmailFollowup] = useState(false);
 
-    const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "localhost:3000";
+    const rootDomain = getRootDomain();
 
     const handleOpenFollowup = (sub: any) => {
         setSubToFollowup(sub);

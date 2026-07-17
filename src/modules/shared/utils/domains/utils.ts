@@ -1,45 +1,50 @@
 
 
-
 /**
  * Dynamically detects the root domain of the application.
  * Returns the domain including port if it's localhost.
  */
 export function getRootDomain(host?: string | null) {
-  // 1. Handle localhost variations first for local development
-  if (host && host.includes("localhost")) {
+  // Deteksi host secara dinamis di client-side jika tidak diberikan
+  const currentHost = host || (typeof window !== "undefined" ? window.location.host : null);
+
+  // 1. Tangani localhost untuk development lokal
+  if (currentHost && currentHost.includes("localhost")) {
     return "localhost:3000";
   }
 
-  // 2. If explicitly set in env, use it (strip protocol only)
+  // 2. Jika diset secara eksplisit di env, gunakan (hanya hapus protokol)
+  // Abaikan env fallback localhost jika di client dan host aslinya bukan localhost
   if (process.env.NEXT_PUBLIC_ROOT_DOMAIN) {
-    return process.env.NEXT_PUBLIC_ROOT_DOMAIN.replace(/^https?:\/\//, '');
+    const envDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN.replace(/^https?:\/\//, '');
+    const isEnvLocalhost = envDomain.includes("localhost") || envDomain.includes("127.0.0.1");
+    const isActualLocalhost = currentHost ? (currentHost.includes("localhost") || currentHost.includes("127.0.0.1")) : false;
+    
+    if (!(isEnvLocalhost && currentHost && !isActualLocalhost)) {
+      return envDomain;
+    }
   }
 
-  // 3. If no host provided, fallback to localhost:3000
-  if (!host) return "localhost:3000";
+  // 3. Jika tidak ada host yang diberikan atau dideteksi, gunakan fallback localhost:3000
+  if (!currentHost) return "localhost:3000";
 
-  // 4. Handle production domains (detecting apex)
-  const hostname = host.split(":")[0];
+  // 4. Tangani domain produksi (deteksi apex domain)
+  const hostname = currentHost.split(":")[0];
   const parts = hostname.split(".");
-  
-  // If it's a subdomain/domain or a platform domain with 3+ parts
+
   if (parts.length >= 3) {
     const last = parts[parts.length - 1].toLowerCase();
     const secondLast = parts[parts.length - 2].toLowerCase();
-    
-    // Check if the domain ends with a multi-part TLD (e.g. .co.id, .web.id, .co.uk)
+
+    // Periksa jika domain menggunakan multi-part TLD (seperti .co.id, .web.id, .co.uk)
     const isMultiPartTld = (last.length <= 3 && secondLast.length <= 3);
-    
+
     if (isMultiPartTld) {
-      // For store.example.co.id, parts.slice(-3) returns example.co.id
       return parts.slice(-3).join(".");
     }
-    
-    // For app.example.com, parts.slice(-2) returns example.com
+
     return parts.slice(-2).join(".");
   }
-
   return hostname;
 }
 

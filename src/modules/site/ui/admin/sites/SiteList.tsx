@@ -22,6 +22,7 @@ import Link from "next/link";
 import Portal from "@/components/ui/Portal";
 import { TableContainer, THead, TBody, TR, TH, TD } from "@/components/ui/Table";
 import { deleteSiteAction, manageSiteAction, assignSiteOwnerAction, updateSiteSubdomainAction } from "@/modules/infrastructure/public-actions";
+import { getRootDomain } from "@/lib/domains/utils";
 
 
 export default function SiteList({ initialSites }: { initialSites: any[] }) {
@@ -149,7 +150,7 @@ export default function SiteList({ initialSites }: { initialSites: any[] }) {
     };
 
 
-    const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "localhost:3000";
+    const rootDomain = getRootDomain();
 
 
     return (
