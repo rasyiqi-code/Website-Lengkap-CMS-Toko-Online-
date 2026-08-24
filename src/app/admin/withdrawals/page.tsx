@@ -6,7 +6,8 @@ export const dynamic = "force-dynamic";
 
 export default async function AdminWithdrawalsPage() {
     const withdrawals = await db.withdrawal.findMany({
-        orderBy: { createdAt: "desc" }
+        orderBy: { createdAt: "desc" },
+        take: 100 // Batasi 100 withdrawal terbaru untuk mencegah memory spike
     });
 
     // Fetch users secara terpisah (soft reference — tanpa FK join)

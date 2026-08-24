@@ -2,8 +2,18 @@ import * as contentRepo from "../repositories/content.repository";
 import * as mediaRepo from "../repositories/media.repository";
 import { uploadToR2, deleteFromR2 } from "@/lib/media/r2";
 import { eventBus } from "@/modules/shared/core/event-bus";
-import sharp from "sharp";
 import path from "path";
+
+// Lazy import sharp — hanya dimuat saat ada upload gambar, menghemat ~50-100MB RAM saat idle
+ 
+let sharpFn: any = null;
+async function getSharp(): Promise<any> {
+    if (!sharpFn) {
+        const mod = await import("sharp");
+        sharpFn = mod.default || mod;
+    }
+    return sharpFn;
+}
 
 /**
  * Mengambil daftar media items beserta informasi sisa kuota penyimpanan.
@@ -83,6 +93,7 @@ export async function uploadMedia(siteId: string, file: File, folderId: string |
 
     if (isImage) {
         try {
+            const sharp = await getSharp();
             const image = sharp(buffer);
             await image.metadata();
             

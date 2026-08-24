@@ -14,6 +14,7 @@ export default async function AdminAffiliatesPage() {
         orderBy: {
             createdAt: "desc"
         },
+        take: 100, // Batasi 100 affiliate terbaru untuk mencegah memory spike
         select: {
             id: true,
             name: true,

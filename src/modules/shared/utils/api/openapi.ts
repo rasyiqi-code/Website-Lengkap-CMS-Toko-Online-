@@ -94,7 +94,17 @@ const HealthSchema = z.object({
   checks: z.object({
     database: z.enum(['healthy', 'unhealthy']),
     storage: z.enum(['configured', 'not-configured']),
+    memory: z.enum(['normal', 'high']).optional(),
   }),
+  memory: z.object({
+    rss: z.string(),
+    heapUsed: z.string(),
+    heapTotal: z.string(),
+    external: z.string(),
+    arrayBuffers: z.string(),
+    heapUsagePercent: z.string(),
+    heapLimitMB: z.string(),
+  }).optional(),
 });
 
 // Register paths

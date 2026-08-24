@@ -1,17 +1,21 @@
 import { getApiContext, apiResponse, apiError } from "@/lib/api/utils";
-import { InfrastructureClient } from "../index";
+import { createBackupStream } from "../services/backup-export.service";
+import { importBackupData } from "../services/backup-import.service";
 
 export async function exportBackupApi() {
     try {
         const { error, status } = await getApiContext(["admin"], { requireSite: false });
         if (error) return apiError(error, status);
 
-        const backupData = await InfrastructureClient.exportBackupData();
         const dateStr = new Date().toISOString().split('T')[0];
         const timeStr = new Date().toTimeString().split(' ')[0].replace(/:/g, '-');
         const filename = `backup-situsbisnis-${dateStr}_${timeStr}.json`;
 
-        return new Response(JSON.stringify(backupData, null, 2), {
+        // Gunakan streaming Response untuk menghindari memuat semua data ke memory sekaligus.
+        // Data ditulis chunk-by-chunk ke response stream, sehingga peak memory ≈ 1 tabel terbesar.
+        const backupStream = createBackupStream();
+
+        return new Response(backupStream, {
             status: 200,
             headers: {
                 "Content-Type": "application/json",
@@ -36,7 +40,7 @@ export async function importBackupApi(req: Request) {
         }
 
         const body = await req.json();
-        const result = await InfrastructureClient.importBackupData(body, currentAdminId);
+        const result = await importBackupData(body, currentAdminId);
 
         if (!result.success) {
             return apiError(result.message, 500);

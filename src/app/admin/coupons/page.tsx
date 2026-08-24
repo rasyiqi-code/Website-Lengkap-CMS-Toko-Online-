@@ -9,7 +9,8 @@ export default async function AdminCouponsPage() {
     const rawCoupons = await db.coupon.findMany({
         orderBy: {
             createdAt: "desc"
-        }
+        },
+        take: 100 // Batasi 100 coupon terbaru untuk mencegah memory spike
     });
 
     const affiliateIds = Array.from(new Set(rawCoupons.map(c => c.affiliateId).filter(Boolean))) as string[];

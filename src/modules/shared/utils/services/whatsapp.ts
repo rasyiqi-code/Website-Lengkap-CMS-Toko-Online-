@@ -1,5 +1,14 @@
 import { db } from "@/lib/core/db";
-import { StarSender } from "@crediblemark/starsender";
+
+// Lazy import @crediblemark/starsender — hanya dimuat saat kirim WhatsApp
+let StarSenderClass: any = null;
+async function getStarSender() {
+    if (!StarSenderClass) {
+        const mod = await import("@crediblemark/starsender");
+        StarSenderClass = mod.StarSender;
+    }
+    return StarSenderClass;
+}
 
 /**
  * Sends a WhatsApp text notification to a recipient using the platform's StarSender configuration.
@@ -43,6 +52,7 @@ export async function sendWhatsAppNotification(to: string, body: string) {
       return { success: false, error: "INVALID_PHONE_NUMBER" };
     }
 
+    const StarSender = await getStarSender();
     const starsender = new StarSender(activeKey);
     const result = await starsender.messages.sendText(formattedTo, body);
 

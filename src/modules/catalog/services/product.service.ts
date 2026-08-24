@@ -1,6 +1,6 @@
 import { db } from "@/modules/shared/core/db";
 import { z } from "zod";
-import { buildPagination, fetchWithCache, publishCrudEvent, checkResourceLimit } from "@/modules/shared/core/crud-base";
+import { buildPagination, fetchWithCache, publishCrudEvent, checkResourceLimit, invalidateCache } from "@/modules/shared/core/crud-base";
 import * as productRepo from "../repositories/product.repository";
 import { deleteMediaByUrl } from "@/modules/media";
 
@@ -112,6 +112,9 @@ export async function createProduct(
     }
 
     await publishCrudEvent("crud.created", "product", siteId, created);
+    
+    // Invalidate cache untuk product list site ini
+    await invalidateCache(`product-list-${siteId}`);
 
     return { success: true, item: created, product: created };
 }
@@ -183,6 +186,9 @@ export async function deleteProductItem(id: string, siteId: string) {
     }
 
     await publishCrudEvent("crud.deleted", "product", siteId, existing);
+    
+    // Invalidate cache untuk product list site ini
+    await invalidateCache(`product-list-${siteId}`);
 
     return { success: true };
 }
@@ -196,6 +202,9 @@ export async function archiveProduct(id: string, siteId: string, isArchived: boo
     const updated = await productRepo.updateProduct(id, siteId, { isArchived } as any);
 
     await publishCrudEvent("crud.updated", "product", siteId, updated);
+    
+    // Invalidate cache untuk product list site ini
+    await invalidateCache(`product-list-${siteId}`);
 
     return { success: true, item: updated };
 }

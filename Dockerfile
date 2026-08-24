@@ -45,6 +45,10 @@ ENV NEXT_TELEMETRY_DISABLED=1
 # Batasi arena alokasi memory glibc untuk mencegah fragmentasi RAM virtual di lingkungan Linux/Docker
 ENV MALLOC_ARENA_MAX=2
 
+# Batasi heap Node.js ke 512MB untuk mencegah RAM membengkak tak terkendali di production
+# Nilai ini di-override oleh start.sh, tapi diset di sini sebagai fallback jika start.sh tidak dipakai
+ENV NODE_OPTIONS='--max-old-space-size=512 --optimize-for-size --gc-interval=100'
+
 # Jalankan sebagai non-root user (best practice keamanan)
 RUN groupadd --system --gid 1001 nodejs \
     && useradd --system --uid 1001 --gid nodejs nextjs

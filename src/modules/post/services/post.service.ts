@@ -2,7 +2,7 @@ import * as contentRepo from "../repositories/content.repository";
 import * as postRepo from "../repositories/post.repository";
 import { db } from "@/modules/shared/core/db";
 import { eventBus } from "@/modules/shared/core/event-bus";
-import { buildPagination, fetchWithCache, publishCrudEvent, checkResourceLimit } from "@/modules/shared/core/crud-base";
+import { buildPagination, fetchWithCache, publishCrudEvent, checkResourceLimit, invalidateCache } from "@/modules/shared/core/crud-base";
 import { AppError } from "@/modules/shared/utils/api/errors";
 
 export async function getPost(slug: string, siteId: string) {
@@ -72,6 +72,9 @@ export async function createPost(siteId: string, data: any, session: any) {
     }
 
     await publishCrudEvent("crud.created", "post", siteId, created);
+    
+    // Invalidate cache untuk post list site ini
+    await invalidateCache(`post-list-${siteId}`);
 
     return { success: true, item: created, post: created };
 }
@@ -106,6 +109,9 @@ export async function updatePost(id: string, siteId: string, data: any, session:
     }
 
     await publishCrudEvent("crud.updated", "post", siteId, updated);
+    
+    // Invalidate cache untuk post list site ini
+    await invalidateCache(`post-list-${siteId}`);
 
     return { success: true, item: updated, post: updated };
 }
@@ -116,6 +122,9 @@ export async function deletePost(id: string, siteId: string) {
 
     await postRepo.deletePost(id, siteId);
     await publishCrudEvent("crud.deleted", "post", siteId, existing);
+    
+    // Invalidate cache untuk post list site ini
+    await invalidateCache(`post-list-${siteId}`);
 
     return { success: true };
 }

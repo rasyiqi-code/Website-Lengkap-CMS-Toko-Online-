@@ -60,14 +60,16 @@ export default async function FinanceDashboardPage() {
     });
     const fallbackSiteIds = fallbackSites.map(site => site.id);
 
-    // 4. Query all paid automated orders from these platform fallback sites
+    // 4. Query paid automated orders from these platform fallback sites
+    // Batasi 200 order terbaru untuk mencegah memory spike
     const paidFallbackOrders = await db.order.findMany({
         where: {
             siteId: { in: fallbackSiteIds },
             paymentStatus: "paid",
             paymentMethod: { notIn: ["manual", "whatsapp"] }
         },
-        orderBy: { createdAt: "desc" }
+        orderBy: { createdAt: "desc" },
+        take: 200
     });
 
     const orderSiteIds = [...new Set(paidFallbackOrders.map(o => o.siteId))];

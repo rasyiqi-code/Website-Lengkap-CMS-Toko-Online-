@@ -1,6 +1,3 @@
-import { generateHTML } from '@tiptap/html';
-import StarterKit from '@tiptap/starter-kit';
-import Image from '@tiptap/extension-image';
 import { getProxiedUrl } from '@/lib/media/utils';
 import filterXSS from 'xss';
 
@@ -8,11 +5,30 @@ function sanitizeHtml(html: string): string {
     return filterXSS(html);
 }
 
+// Lazy imports untuk @tiptap — hanya dimuat saat renderTiptapToHTML dipanggil.
+// Menghemat ~30-50MB RAM karena tiptap packages cukup berat.
+let tiptapModules: { generateHTML: any; StarterKit: any; Image: any } | null = null;
+async function getTiptapModules() {
+    if (!tiptapModules) {
+        const [htmlMod, starterKitMod, imageMod] = await Promise.all([
+            import('@tiptap/html'),
+            import('@tiptap/starter-kit'),
+            import('@tiptap/extension-image'),
+        ]);
+        tiptapModules = {
+            generateHTML: htmlMod.generateHTML,
+            StarterKit: starterKitMod.default,
+            Image: imageMod.default,
+        };
+    }
+    return tiptapModules;
+}
+
 /**
  * Converts Tiptap JSON content to static HTML for Server-Side Rendering.
  * This is crucial for performance (LCP/SEO).
  */
-export function renderTiptapToHTML(content: any): string {
+export async function renderTiptapToHTML(content: any): Promise<string> {
     if (!content) return "";
     
     let parsedContent;
@@ -31,6 +47,7 @@ export function renderTiptapToHTML(content: any): string {
 
     // Convert JSON to HTML using the same extensions as the client
     try {
+        const { generateHTML, StarterKit, Image } = await getTiptapModules();
         let html = generateHTML(parsedContent, [
             StarterKit,
             Image.configure({

@@ -1,5 +1,14 @@
-import { S3Client, PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import { db } from "@/lib/core/db";
+
+// Lazy import @aws-sdk/client-s3 — hanya dimuat saat upload/delete file.
+// AWS SDK sangat berat (~200-300MB saat dimuat), lazy import menghemat RAM saat idle.
+let s3Module: { S3Client: any; PutObjectCommand: any; DeleteObjectCommand: any } | null = null;
+async function getS3Module() {
+    if (!s3Module) {
+        s3Module = await import("@aws-sdk/client-s3");
+    }
+    return s3Module;
+}
 
 export async function getR2Settings() {
     // 1. Try to get from Database
@@ -35,6 +44,7 @@ export async function getR2Settings() {
 }
 
 async function getS3Client(settings: any) {
+    const { S3Client } = await getS3Module();
     const endpoint = settings.endpoint || `https://${settings.accountId}.r2.cloudflarestorage.com`;
     
     return new S3Client({
@@ -56,6 +66,7 @@ export async function uploadToR2(file: Buffer, filename: string, mimeType: strin
         return null;
     }
 
+    const { PutObjectCommand } = await getS3Module();
     const S3 = await getS3Client(settings);
     const key = `${crypto.randomUUID()}-${filename.replace(/\s+/g, '-')}`;
 
@@ -78,6 +89,7 @@ export async function deleteFromR2(fileUrl: string) {
     }
 
     try {
+        const { DeleteObjectCommand } = await getS3Module();
         const S3 = await getS3Client(settings);
         
         let urlStringToParse = fileUrl;

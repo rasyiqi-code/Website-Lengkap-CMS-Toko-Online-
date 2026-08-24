@@ -7,6 +7,7 @@ export const dynamic = "force-dynamic";
 export default async function AdminSitesPage() {
     const dbSites = await db.site.findMany({
         orderBy: { createdAt: "desc" },
+        take: 100, // Batasi 100 situs terbaru untuk mencegah memory spike
         where: {
             NOT: { subdomain: "admin" }
         },

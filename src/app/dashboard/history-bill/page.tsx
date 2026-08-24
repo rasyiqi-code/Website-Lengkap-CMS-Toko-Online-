@@ -71,6 +71,7 @@ export default async function HistoryBillPage() {
 
     const transactions = await db.paymentTransaction.findMany({
         where: { siteId },
+        take: 100, // Batasi 100 transaksi terbaru untuk mencegah memory spike
         select: {
             id: true,
             amount: true,

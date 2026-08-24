@@ -5,8 +5,8 @@ import { renderTiptapToHTML } from "@/lib/editor/render";
  * This component renders Tiptap content as static HTML on the server.
  * This dramatically improves LCP and SEO by including the main content in the initial HTML.
  */
-export default function TiptapRenderer({ content }: { content: any }) {
-    const html = renderTiptapToHTML(content);
+export default async function TiptapRenderer({ content }: { content: any }) {
+    const html = await renderTiptapToHTML(content);
 
     return (
         <div 

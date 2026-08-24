@@ -7,6 +7,7 @@ export const dynamic = "force-dynamic";
 export default async function AdminSubscriptionsPage() {
     const rawSubscriptions = await db.subscription.findMany({
         orderBy: { startDate: "desc" },
+        take: 100, // Batasi 100 langganan terbaru untuk mencegah memory spike
         select: {
             id: true,
             startDate: true,

@@ -4,22 +4,25 @@ const createPrismaClient = () => {
     let dbUrl = process.env.DATABASE_URL || "";
     const isDev = process.env.NODE_ENV === "development";
     
-    // Membaca batas koneksi database dari env jika disediakan, default ke 5 (dev) atau 25 (prod)
+    // Deteksi PgBouncer — jika ada, gunakan connection_limit rendah karena PgBouncer sudah menangani pooling
+    const isPgBouncer = dbUrl.includes("pgbouncer=true");
+    
+    // Default: 2 koneksi untuk PgBouncer (sudah ada pooling), 10 koneksi untuk direct connection
+    // Override: DATABASE_CONNECTION_LIMIT env var (highest priority)
+    const defaultLimit = isPgBouncer ? 2 : (isDev ? 5 : 10);
     const limit = process.env.DATABASE_CONNECTION_LIMIT 
         ? parseInt(process.env.DATABASE_CONNECTION_LIMIT) 
-        : (isDev ? 5 : 25);
+        : defaultLimit;
     const timeout = isDev ? 30 : 15;
     
     if (dbUrl) {
         if (!dbUrl.includes("connection_limit")) {
             const separator = dbUrl.includes("?") ? "&" : "?";
             dbUrl = `${dbUrl}${separator}connection_limit=${limit}&pool_timeout=${timeout}`;
-        } else {
-            // Pengamanan tingkat lanjut (self-healing): jika connection_limit diatur terlalu rendah (misal: 1 atau 2),
-            // paksa naikkan nilainya ke batas aman (limit) agar tidak terjadi bottleneck/antrean database.
-            dbUrl = dbUrl.replace(/([?&]connection_limit=)[1-2]([&]|$)/, `$1${limit}$2`);
-            dbUrl = dbUrl.replace(/([?&]connection_limit=)[1-2]$/, `$1${limit}`);
         }
+        // Self-healing DIHAPUS: Jika connection_limit sudah ada di URL, hormati nilainya.
+        // PgBouncer users sering set connection_limit=1 atau 2 di URL mereka — jangan override.
+        // DATABASE_CONNECTION_LIMIT env var masih bisa override via kode di atas jika memang perlu.
 
         if (!dbUrl.includes("pool_timeout")) {
             const separator = dbUrl.includes("?") ? "&" : "?";

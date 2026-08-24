@@ -21,10 +21,12 @@ export default async function CustomersPage() {
     const paymentSettings = await getPaymentSettings();
     const currency = paymentSettings.currency || "USD";
 
-    // Ambil semua pesanan dari situs aktif untuk diagregasi
+    // Ambil pesanan terbaru dari situs aktif untuk diagregasi
+    // Batasi 500 order terbaru untuk mencegah memory spike pada situs dengan banyak pesanan
     const orders = await db.order.findMany({
         where: { siteId },
         orderBy: { createdAt: 'desc' },
+        take: 500,
         select: {
             customerName: true,
             customerEmail: true,

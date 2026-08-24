@@ -1,5 +1,12 @@
-import { withSentryConfig } from "@sentry/nextjs";
 import path from "path";
+
+// Lazy import Sentry hanya jika DSN dikonfigurasi — menghemat ~30-50MB RAM saat Sentry tidak dipakai
+const sentryDsn = process.env.NEXT_PUBLIC_SENTRY_DSN;
+let withSentryConfig;
+if (sentryDsn) {
+  const sentryModule = await import("@sentry/nextjs");
+  withSentryConfig = sentryModule.withSentryConfig;
+}
 
 const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 const appHostname = new URL(appUrl).hostname;
@@ -159,10 +166,13 @@ const nextConfig = {
   },
 };
 
-export default withSentryConfig(nextConfig, {
-  org: process.env.SENTRY_ORG || "",
-  project: process.env.SENTRY_PROJECT || "",
-  silent: true,
-  widenClientFileUpload: true,
-  hideSourceMaps: true,
-});
+// Hanya wrap dengan Sentry jika DSN dikonfigurasi — mencegah bundling Sentry SDK yang berat saat tidak dipakai
+export default withSentryConfig 
+  ? withSentryConfig(nextConfig, {
+      org: process.env.SENTRY_ORG || "",
+      project: process.env.SENTRY_PROJECT || "",
+      silent: true,
+      widenClientFileUpload: true,
+      hideSourceMaps: true,
+    })
+  : nextConfig;

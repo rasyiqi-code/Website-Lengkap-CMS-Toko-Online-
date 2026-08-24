@@ -7,6 +7,7 @@ export const dynamic = "force-dynamic";
 export default async function AdminTransactionsPage() {
     const rawTransactions = await db.paymentTransaction.findMany({
         orderBy: { createdAt: "desc" },
+        take: 100, // Batasi 100 transaksi terbaru untuk mencegah memory spike
         select: {
             id: true,
             amount: true,

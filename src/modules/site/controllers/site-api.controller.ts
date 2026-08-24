@@ -136,14 +136,65 @@ export async function getHealthApi() {
     healthLogger.info({ storage: false }, "Storage (R2) is not configured");
   }
 
+  // ── Memory usage monitoring ──
+  const mem = process.memoryUsage();
+  const formatBytes = (bytes: number) => {
+    const mb = (bytes / 1024 / 1024).toFixed(2);
+    return `${mb} MB`;
+  };
+
+  // Hitung batas heap dari NODE_OPTIONS (--max-old-space-size)
+  const nodeOptions = process.env.NODE_OPTIONS || "";
+  const heapLimitMatch = nodeOptions.match(/--max-old-space-size=(\d+)/);
+  const heapLimitMB = heapLimitMatch ? parseInt(heapLimitMatch[1]) : null;
+
+  // Hitung persentase penggunaan heap
+  const heapUsedMB = mem.heapUsed / 1024 / 1024;
+  const heapTotalMB = mem.heapTotal / 1024 / 1024;
+  const heapUsagePercent = heapTotalMB > 0 ? ((heapUsedMB / heapTotalMB) * 100).toFixed(1) : "0.0";
+
+  // Warning threshold: jika heap usage > 80% dari heap limit
+  const isMemoryHigh = heapLimitMB ? heapUsedMB > heapLimitMB * 0.8 : false;
+
+  if (isMemoryHigh) {
+    healthLogger.warn(
+      { heapUsedMB: heapUsedMB.toFixed(2), heapLimitMB },
+      "High memory usage detected"
+    );
+  }
+
+  // ── Process info ──
+  const uptimeSeconds = Math.floor(process.uptime());
+  const uptimeFormatted = `${Math.floor(uptimeSeconds / 3600)}h ${Math.floor((uptimeSeconds % 3600) / 60)}m ${uptimeSeconds % 60}s`;
+
   return NextResponse.json(
     {
       status: isHealthy ? "healthy" : "degraded",
       timestamp: new Date().toISOString(),
       version: process.env.npm_package_version || "unknown",
+      uptime: uptimeFormatted,
       checks: {
         database: dbHealthy ? "healthy" : "unhealthy",
         storage: storageHealthy ? "configured" : "not-configured",
+        memory: isMemoryHigh ? "high" : "normal",
+      },
+      memory: {
+        rss: formatBytes(mem.rss),
+        heapUsed: formatBytes(mem.heapUsed),
+        heapTotal: formatBytes(mem.heapTotal),
+        external: formatBytes(mem.external),
+        arrayBuffers: formatBytes(mem.arrayBuffers),
+        heapUsagePercent: `${heapUsagePercent}%`,
+        heapLimit: heapLimitMB ? `${heapLimitMB} MB` : "not-set",
+        // Warning: jika melebihi 80% dari heap limit
+        warning: isMemoryHigh ? `Heap usage (${heapUsedMB.toFixed(0)}MB) melebihi 80% dari limit (${heapLimitMB}MB)` : null,
+      },
+      // Environment info untuk debugging
+      environment: {
+        nodeEnv: process.env.NODE_ENV || "unknown",
+        runtime: typeof globalThis.Bun !== "undefined" ? "bun" : "node",
+        pid: process.pid,
+        pgbouncer: (process.env.DATABASE_URL || "").includes("pgbouncer=true"),
       },
     },
     { status: statusCode }

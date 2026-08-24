@@ -28,6 +28,11 @@ services:
 
       # GitHub PAT untuk fetch roadmap dari GitHub Projects
       GITHUB_PAT: ${GITHUB_PAT}
+    # Batasi RAM container agar tidak melebihi 768MB (prevents OOM kill dari host)
+    mem_limit: 768m
+    memswap_limit: 768m
+    # shm_size untuk browser testing (Playwright)
+    shm_size: '256m'
     networks:
       - dokploy-network
     labels:
