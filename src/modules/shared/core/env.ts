@@ -34,6 +34,8 @@ const envSchema = z.object({
 
   // Optional - Redis
   REDIS_URL: z.string().optional(),
+  UPSTASH_REDIS_REST_URL: z.string().optional(),
+  UPSTASH_REDIS_REST_TOKEN: z.string().optional(),
 
   // Optional - Direct connection (bypassing PgBouncer pooler)
   DIRECT_URL: z.string().url().optional(),
@@ -63,6 +65,8 @@ const parsed = envSchema.safeParse({
   R2_BUCKET_NAME: process.env.R2_BUCKET_NAME,
   R2_PUBLIC_URL: process.env.R2_PUBLIC_URL,
   REDIS_URL: process.env.REDIS_URL,
+  UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL,
+  UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN,
   DIRECT_URL: process.env.DIRECT_URL || process.env.DATABASE_URL,
   LOG_LEVEL: process.env.LOG_LEVEL,
 });
@@ -91,6 +95,8 @@ if (!parsed.success) {
       DEFAULT_INSTRUCTIONS: "",
       DEFAULT_THEME: "default",
       DEFAULT_BRAND_COLOR: "#0ea5e9",
+      UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL,
+      UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN,
     } as any;
   } else {
     console.error("❌ Environment validation failed:");

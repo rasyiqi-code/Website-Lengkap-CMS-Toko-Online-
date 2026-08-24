@@ -1,19 +1,49 @@
 import { env } from "./env";
 
+// ─── Upstash REST API Client (untuk caching) ───────────────────────────────
+// Upstash REST API bekerja tanpa TCP connection — cocok untuk serverless/edge.
+// Digunakan untuk operasi caching (get, set, del) yang tidak memerlukan pub/sub.
+let upstashClient: any = null;
+
+export async function getUpstash() {
+    if (upstashClient) return upstashClient;
+    
+    // Check for Upstash env vars
+    const restUrl = process.env.UPSTASH_REDIS_REST_URL;
+    const restToken = process.env.UPSTASH_REDIS_REST_TOKEN;
+    
+    if (!restUrl || !restToken) return null;
+    
+    try {
+        const { Redis } = await import("@upstash/redis");
+        upstashClient = new Redis({
+            url: restUrl,
+            token: restToken,
+        });
+        return upstashClient;
+    } catch (error) {
+        console.warn("[Upstash] Failed to initialize:", error);
+        return null;
+    }
+}
+
+// ─── ioredis TCP Client (untuk pub/sub & fallback) ─────────────────────────
+// ioredis TCP dibutuhkan untuk Redis Pub/Sub (EventBus).
+// Jika Upstash tersedia, ioredis hanya dipakai untuk pub/sub.
 let redisInstance: any = null;
 let isRedisConnectionFailed = false;
 let lastConnectionAttempt = 0;
 const RETRY_COOLDOWN = 30000; // 30 seconds
 
 // Helper to determine if Redis is configured
-export const isRedisAvailable = !!env.REDIS_URL;
+export const isRedisAvailable = !!(env.REDIS_URL || process.env.UPSTASH_REDIS_REST_URL);
 
 /**
- * Gets the active Redis instance. 
+ * Gets the active Redis instance (ioredis TCP).
  * Resolves lazily to ensure compatibility with Next.js compilation, HMR, and Edge routing.
  */
 export async function getRedis() {
-    if (!isRedisAvailable) return null;
+    if (!env.REDIS_URL) return null;
     
     const now = Date.now();
     if (isRedisConnectionFailed && (now - lastConnectionAttempt < RETRY_COOLDOWN)) {

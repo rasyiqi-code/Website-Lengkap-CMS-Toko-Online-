@@ -39,7 +39,7 @@ export function buildPagination(searchParams: URLSearchParams): PaginationParams
 export async function fetchWithCache<T>(
     cacheKey: string,
     fetchFn: () => Promise<T>,
-    _tags: string[],  // Tags tidak dipakai di Redis, tapi dipertahankan untuk backward compat
+    tags: string[],  // Tags digunakan untuk Upstash cache key tracking
     ttlInSeconds = 300
 ): Promise<T & { fromCache?: boolean }> {
     const redisKey = `cache:${cacheKey}`;
@@ -56,6 +56,25 @@ export async function fetchWithCache<T>(
     // 3. Simpan ke Redis cache
     await setCache(redisKey, freshData, ttlInSeconds);
     
+    // 4. Track cache key untuk Upstash invalidation (Upstash tidak punya SCAN/KEYS)
+    try {
+        const { getUpstash } = await import("@/modules/shared/core/redis");
+        const upstash = await getUpstash();
+        if (upstash && tags.length > 0) {
+            // Simpan key ini ke list untuk setiap tag (contoh: post-list-site123)
+            for (const tag of tags) {
+                const listKey = `cache:keys:${tag}`;
+                const existingKeys = (await upstash.get(listKey)) as string[] || [];
+                if (!existingKeys.includes(redisKey)) {
+                    existingKeys.push(redisKey);
+                    await upstash.set(listKey, JSON.stringify(existingKeys), { ex: ttlInSeconds + 60 });
+                }
+            }
+        }
+    } catch (_) {
+        // Silent fail — tracking tidak kritis
+    }
+    
     return { ...freshData, fromCache: false } as T & { fromCache?: boolean };
 }
 
@@ -69,7 +88,23 @@ export async function fetchWithCache<T>(
  */
 export async function invalidateCache(pattern: string): Promise<void> {
     try {
-        const { getRedis } = await import("@/modules/shared/core/redis");
+        const { getUpstash, getRedis } = await import("@/modules/shared/core/redis");
+        
+        // Prioritaskan Upstash REST API
+        const upstash = await getUpstash();
+        if (upstash) {
+            // Upstash REST API tidak punya SCAN/KEYS, jadi kita delete by convention
+            // Kita simpan list keys di cache terpisah untuk invalidation
+            const listKey = `cache:keys:${pattern}`;
+            const keys = await upstash.get(listKey) as string[] | null;
+            if (keys && keys.length > 0) {
+                await upstash.del(...keys);
+            }
+            await upstash.del(listKey);
+            return;
+        }
+        
+        // Fallback ke ioredis (punya SCAN/KEYS)
         const redis = await getRedis();
         if (!redis) return;
         

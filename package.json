@@ -44,6 +44,7 @@
     "@tiptap/pm": "^3.27.1",
     "@tiptap/react": "^3.27.1",
     "@tiptap/starter-kit": "^3.27.1",
+    "@upstash/redis": "^1.38.2",
     "bcryptjs": "^2.4.3",
     "ioredis": "^5.11.1",
     "lucide-react": "^0.556.0",
